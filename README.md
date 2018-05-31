@@ -66,10 +66,62 @@ The purpose of this program was to organize all the water data from an ongoing r
 
 The basic layout of any Shiny App is a server.R and ui.R file, although they can be combined into the same script with some extra commands. For this application the two files were separated and both need to exist in the same working directory, as well as several other files. The server and ui file work together using inputs and outputs. Note that the file names (server, ui) are incredibly important and cannot be changed.
 
- **2a. ui.R**
+ **3a. ui.R**
   
-  UI stands for user interface and this file sets up exactly that. The ui.R file is much smaller than its counterpart as no calculations   are done within this file. Buttons, date inputs, and plot placements are all created and controlled here. The main jobs of the ui are   too set up how the page looks, take in information from the user, and output/visualize the data made by the server.
+UI stands for user interface and this file sets up exactly that. The ui.R file is much smaller than its counterpart as no calculations   are done within this file. Buttons, date inputs, and plot placements are all created and controlled here. The main jobs of the ui are   too set up how the page looks, take in information from the user, and output/visualize the data made by the server.
   
- * 2b. server.R
+ **3b. server.R**
   
-  This is a much larger file consisting of the real bulk of the coding. This file controls what happens when those buttons are pushed,     what the program does with date inputs, and also creates the plots and the corresponding data. The main job of the server is too make   sense of user inputs and organize, calculate, and plot data based on those inputs. 
+This is a much larger file consisting of the real bulk of the coding. This file controls what happens when those buttons are pushed,    what the program does with date inputs, and also creates the plots and the corresponding data. The main job of the server is too make   sense of user inputs and organize, calculate, and plot data based on those inputs. 
+  
+  ### 4.Input Files
+  
+Besides ui.R and server.R there are several other incredibly important files needed for this program. Since the program accesses data   both online and offline, the offline data needs to be pushed online when the program is deployed (see section 7). 
+
+  **4a. Offline Data Files**
+
+  Currently there are nine sites within the application, with three of those being “live” sites with online data on the NWIS site. All     sites have some offline data, as many of the sites were being monitored with Aqua Troll 100s long before real time data was available.   Each of these sites has three files, Offline Data, Average Load Data, and Water Year Data. **These files should exist in the working       directory in a folder labeled “Data”**. Note that column names are not as important, and all that really matters is position and      format.   These columns will be described in detail below. 
+	
+   **SiteDataOffline.csv**
+    
+   This file holds the bulk of information used for the program and the name of the file should be the site name followed by 	   	    DataOffline, no spaces. If you are in need of adding additional sites no already implemented please see section (4a & 6c). The 	    file should be of .csv format (you should set up in excel then convert), and should consist of three columns.
+
+   Column 1) Date-Time, format= mm-dd-YYYY HH:MM
+   Column 2) Discharge, liters per minute (l/m)
+   Column 3) Specific Conductance, µS/cm
+ 
+   Important: Column one must be in the specified format via excel, after you change the formatting of the column save as a .csv 	    and exit and then leave the file alone. If the file is appended or edited, the column’s format will no longer be in the 		    specified form and the program will give you the error: “Warning in min(x) : no non-missing arguments to min; returning Inf”. 	    This can be fixed by re-formatting the Date-Time column and saving. 
+
+   Note: Column 2, 3 have intervals of 15 minutes. 
+   
+**SiteAverageLoad.csv:**
+
+This file holds the average load based on the month and day. This data was calculated using the offline & online (if any) data available and calculating an average load for the given day over a number of years. All these calculations were done in excel, and exclude 2/29 due to leap years. The actual files containing the calculations are not included with the online package, but exist with the originators. The file should consist of two columns.
+
+Column 1) Date-Time, format= mm-dd HH:MM
+Column 2) Average Load, liters per minute (l/min) 
+
+Note: Column 1 does not include year, as the average data will be matched with the requested data based on month, day, and time alone. 
+
+Note: Column 2 has intervals of 15 minutes. 
+
+**SiteWaterYears.csv:**
+
+This file holds the sum total for a given water year, October 1st to September 29th for any full years we have available for a given site. These values were calculated off the data in the Offline Data File, by multiplying by 15 (to get grams from g/min, since the interval of data was 15 minutes), and then summing the data in the water year. The file should consist of two columns.
+
+Column 1) Water Year, format=YYYY
+Column 2) Total Load, grams per year (g/yr)
+
+Note: Do not include commas in Column 2 as R will assign the data as a character and not a numeric object. 
+	
+**4b. Miscellaneous Files**
+
+**Folder “www”:**
+
+This folder simply contains the USGS logo which is used by the ui.R to place it at the top   left-hand corner of the interface. The logo is saved as logo.png, and is the only file in the www folder in this version. If a new logo is chosen for the application, use the same name and format (.png), although it will most likely not fit perfectly and some HTML styling will need to be done in the ui.R for a proper fit. 
+
+**Folder “rsconnect”:**
+
+This folder simply contains code that allows the program to be published, note this is not made by the user or programmer but the shinyapp.io server. If this folder is not in your directory it is not a problem, as if you are deploying this application yourself it will be created in the process. Please see section 7 for how to deploy the program.
+
+
