@@ -2,7 +2,7 @@
 
 ## Table of Contents
 
-1.	**Introduction**
+1.	**[Introduction](https://github.com/EthanStevensUSGS/Yellowstone-Application/blob/Updates/README.md#introduction)**
 2.	**Purpose**
 3.	**Main Software Layout**
      * *ui.R*
