@@ -4,7 +4,7 @@
 
 1.	**[Introduction](https://github.com/EthanStevensUSGS/Yellowstone-Application/blob/Updates/README.md#introduction)**
 2.	**[Purpose](https://github.com/EthanStevensUSGS/Yellowstone-Application/blob/Updates/README.md#2purpose)**
-3.	**[Main Software Layout](https://github.com/EthanStevensUSGS/Yellowstone-Application/blob/Updates/README.md#3main-softwarelayout)**
+3.	**[Main Software Layout](https://github.com/EthanStevensUSGS/Yellowstone-Application/blob/Updates/README.md#3mainsoftwarelayout).**
      * *ui.R*
      * *server.R*
 4.	**Input Files**
@@ -45,7 +45,7 @@
    - 6j. Load Function
      * *Average Load Function*
      * *Overlay Function*
-   - 6k. Discharge vs. Specific Conductance Plot
+   - 6k. Discharge vs. Specific Conductance Plo
    - 6L. Summary Tab
      * *Water Years Function*
 7.	**Deploying**
