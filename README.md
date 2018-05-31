@@ -70,6 +70,6 @@ The basic layout of any Shiny App is a server.R and ui.R file, although they can
   
   UI stands for user interface and this file sets up exactly that. The ui.R file is much smaller than its counterpart as no calculations   are done within this file. Buttons, date inputs, and plot placements are all created and controlled here. The main jobs of the ui are   too set up how the page looks, take in information from the user, and output/visualize the data made by the server.
   
- **2b. server.R**
+ *2b. server.R
   
   This is a much larger file consisting of the real bulk of the coding. This file controls what happens when those buttons are pushed,     what the program does with date inputs, and also creates the plots and the corresponding data. The main job of the server is too make   sense of user inputs and organize, calculate, and plot data based on those inputs. 
