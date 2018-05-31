@@ -52,3 +52,8 @@
 8.	**Addition of River Sites**
      * *Making an offline site online*
 9. **Addition of Constituents**
+
+
+### Introduction
+
+Shiny is an R, HTML interface that allows users to easily create web interfaces and applications for R based code. Shiny has built in widgets and page layouts that can all be coded for in R, as well as allowing the user to input HTML code wherever they see fit.  Most all of the code besides some style elements were written in R for this current version of the application. 
