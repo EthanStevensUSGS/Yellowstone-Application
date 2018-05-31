@@ -3,7 +3,7 @@
 ## Table of Contents
 
 1.	**[Introduction](https://github.com/EthanStevensUSGS/Yellowstone-Application/blob/Updates/README.md#introduction)**
-2.	**Purpose**
+2.	**[Purpose](https://github.com/EthanStevensUSGS/Yellowstone-Application/blob/Updates/README.md#2purpose)**
 3.	**Main Software Layout**
      * *ui.R*
      * *server.R*
@@ -82,7 +82,7 @@ Besides ui.R and server.R there are several other incredibly important files nee
 
   Currently there are nine sites within the application, with three of those being “live” sites with online data on the NWIS site. All     sites have some offline data, as many of the sites were being monitored with Aqua Troll 100s long before real time data was available.   Each of these sites has three files, Offline Data, Average Load Data, and Water Year Data. **These files should exist in the working       directory in a folder labeled “Data”**. Note that column names are not as important, and all that really matters is position and      format.   These columns will be described in detail below. 
 	
-   **SiteDataOffline.csv**
+   **_SiteDataOffline.csv_**
     
    This file holds the bulk of information used for the program and the name of the file should be the site name followed by 	   	    DataOffline, no spaces. If you are in need of adding additional sites no already implemented please see section (4a & 6c). The 	    file should be of .csv format (you should set up in excel then convert), and should consist of three columns.
 
@@ -94,7 +94,7 @@ Besides ui.R and server.R there are several other incredibly important files nee
 
    Note: Column 2, 3 have intervals of 15 minutes. 
    
-**SiteAverageLoad.csv:**
+**_SiteAverageLoad.csv:_**
 
 This file holds the average load based on the month and day. This data was calculated using the offline & online (if any) data available and calculating an average load for the given day over a number of years. All these calculations were done in excel, and exclude 2/29 due to leap years. The actual files containing the calculations are not included with the online package, but exist with the originators. The file should consist of two columns.
 
@@ -105,7 +105,7 @@ Note: Column 1 does not include year, as the average data will be matched with t
 
 Note: Column 2 has intervals of 15 minutes. 
 
-**SiteWaterYears.csv:**
+**_SiteWaterYears.csv:_**
 
 This file holds the sum total for a given water year, October 1st to September 29th for any full years we have available for a given site. These values were calculated off the data in the Offline Data File, by multiplying by 15 (to get grams from g/min, since the interval of data was 15 minutes), and then summing the data in the water year. The file should consist of two columns.
 
@@ -116,11 +116,11 @@ Note: Do not include commas in Column 2 as R will assign the data as a character
 	
 **4b. Miscellaneous Files**
 
-**Folder “www”:**
+**_Folder “www”:_**
 
 This folder simply contains the USGS logo which is used by the ui.R to place it at the top   left-hand corner of the interface. The logo is saved as logo.png, and is the only file in the www folder in this version. If a new logo is chosen for the application, use the same name and format (.png), although it will most likely not fit perfectly and some HTML styling will need to be done in the ui.R for a proper fit. 
 
-**Folder “rsconnect”:**
+**_Folder “rsconnect”:_**
 
 This folder simply contains code that allows the program to be published, note this is not made by the user or programmer but the shinyapp.io server. If this folder is not in your directory it is not a problem, as if you are deploying this application yourself it will be created in the process. Please see section 7 for how to deploy the program.
 
