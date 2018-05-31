@@ -4,7 +4,7 @@
 
 1.	**[Introduction](https://github.com/EthanStevensUSGS/Yellowstone-Application/blob/Updates/README.md#introduction)**
 2.	**[Purpose](https://github.com/EthanStevensUSGS/Yellowstone-Application/blob/Updates/README.md#2purpose)**
-3.	**Main Software Layout**
+3.	**[Main Software Layout](https://github.com/EthanStevensUSGS/Yellowstone-Application/blob/Updates/README.md#3main-softwarelayout)**
      * *ui.R*
      * *server.R*
 4.	**Input Files**
@@ -124,4 +124,40 @@ This folder simply contains the USGS logo which is used by the ui.R to place it 
 
 This folder simply contains code that allows the program to be published, note this is not made by the user or programmer but the shinyapp.io server. If this folder is not in your directory it is not a problem, as if you are deploying this application yourself it will be created in the process. Please see section 7 for how to deploy the program.
 
+### 5. ui.R Logic**
+Since the details on every line of code is already included as comments within the code itself, it will not be covered in this manual. Instead, this section will cover the logic and reasoning behind the events taking place within the ui and how it relates to the program as a whole. 
+	
+**5a. Libraries**
+
+Libraries call R packages previously downloaded to the users’ desktop. The libraries, if not called,   will not allow certain sections of the code to be run since these packages contain functions used throughout the program. For a full list of packages and citations please see section: Citations. To install these packages, use command, [install.packages(”packagename”)]. 
+
+**5b. navbarPage()**
+
+This is the first line of code after the ui call. navbarPage is a pre-defined layout from Shiny that allows us to have a navigation bar at the top of the page, which in turn also has two tabs (Plot/Data, Summary). These two tabs can be written to by calling, [tabPanel("Plot/Data",….)]. Anything in the parenthesis is going to be included within that tab. This navbarPage is further broken down as explained in the next section (4c.).
+
+**_Tabs ui breakdown:_**
+* Plot/Data: Allows user to search for data across all sites, ui described in 5c & 5d.
+* Summary: Allows user to see tables of data and water year data, ui described in 5e.
+See [?tabPanel()] for arguments 
+
+**5c. sidebarPanel()**
+
+SidebarPanel is a pre-defined module by Shiny, this sets up a side bar on the side of the page which we fill with many input widgets to gain information from the user. When we call this module we automatically set up the interface for the page in two sections, the sidebar, and the main panel (section 4d.). Within our side bar we can start to create widgets.
+
+e.g.
+
+The first thing done was to call the sidebarPanel, and label it along with providing a width. Note that the width should not be changed as there are HTML elements dependent on it. After the panel call we can now start to populate the panel with widgets, our first widget being a date input box. 
+		
+**_Input Widgets:_**
+
+When we create widgets we are essentially placing an object that allows the user to give us feedback. Whether it be a checkbox, date input, or drop down menu the data is saved in the form [input$____], with the name following the $ being the name of the widget. This name is the first argument after the widget call, inside of the parenthesis. In the example above the name of the widget is “dateStart” and we can access the date input by the user by calling [input$dateStart] within the server.R.
+There are many widgets Shiny can use, please refer to the Shiny widgets gallery for more information. https://shiny.rstudio.com/gallery/widget-gallery.html
+	
+**5d. mainPanel()**
+
+The main panel makes up the rest of the interface within the “Plot/Data” tab. Within this panel we are outputting our graphs created on the server side. We can output these graphs by the code, [plotOutput("veiw",click = "Load_click")]. “View” refers to the plot label that is created on the server side. On the server side all the axes, labels, and formatting for the plot is created, we simply print it out in the main panel ui.  The “click” refers to a function created on the server side that allows the user to hover over the graph and click on points. The points the user clicks on will be displayed in the sidebar using another output, [verbatimTextOutput("click_info")]. Note the text output is under the sidebarPanel(). 
+
+**5e. fluidPage()**
+
+As we move on to the second tab, “Summary”, we change the layout quite a bit. Instead of using a side bar panel and main panel as done on the previous tab we are going to use a more custom layout. Fluid page allows for the user to have more control over the layout by using a grid layout 12 columns wide. We can call [column()] or [fluidrow()] and nest ui elements within them to set up our page. The catch is that the 12 column wide grid is “fluid” meaning that if we decided to put another row within our page nested in the previous row, it must add up to 12, even if the previous row only took up 6. The idea of fluid is that column length is more of a percentage of 12 than a sum to 12. This is very confusing at first and I would advise you to read [?fluidpage()]. Since this is so confusing I have decided to explain this part of the code in detail, as updating it to include more elements may be tricky. 
 
