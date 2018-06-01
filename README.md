@@ -2,12 +2,12 @@
 
 ## Table of Contents
 
-1.	**[Introduction](https://github.com/EthanStevensUSGS/Yellowstone-Application/blob/Updates/README.md#1introduction)**
-2.	**[Purpose](https://github.com/EthanStevensUSGS/Yellowstone-Application/blob/Updates/README.md#2purpose)**
-3.	**[Main Software Layout](https://github.com/EthanStevensUSGS/Yellowstone-Application/blob/Updates/README.md#3main-software-layout)**
+1.	**[Introduction](https://github.com/EthanStevensUSGS/Yellowstone-Application#1introduction)**
+2.	**[Purpose](https://github.com/EthanStevensUSGS/Yellowstone-Application#2purpose)**
+3.	**[Main Software Layout](https://github.com/EthanStevensUSGS/Yellowstone-Application#3main-software-layout)**
      * *ui.R*
      * *server.R*
-4.	**[Input Files](https://github.com/EthanStevensUSGS/Yellowstone-Application/blob/Updates/README.md#4input-files)**
+4.	**[Input Files](https://github.com/EthanStevensUSGS/Yellowstone-Application#4input-files)**
    - 4a. Offline Data Files
 	    * *SiteOfflineData.csv*
 	    * *SiteAverageLoad.csv*
@@ -16,7 +16,7 @@
       * *Miscellaneous Files*
       * *www folder*
       * *rsconnect folder*
-5.	**[ui.R logic](https://github.com/EthanStevensUSGS/Yellowstone-Application/blob/Updates/README.md#5-uir-logic)**
+5.	**[ui.R logic](https://github.com/EthanStevensUSGS/Yellowstone-Application#5-uir-logic)**
    - 5a. Libraries
    - 5b. navbarPage()
       * *Tabs (Plot/Data, Summary)*
@@ -26,7 +26,7 @@
    - 5e. fluidPage()
    - 5f. Embedded HTML 
 
-6.	**[server.R logic](https://github.com/EthanStevensUSGS/Yellowstone-Application/blob/Updates/README.md#6serverr-logic)**
+6.	**[server.R logic](https://github.com/EthanStevensUSGS/Yellowstone-Application#6serverr-logic)**
    - 6a. Main Function
      * *Input & Output Calls*
    - 6b. observeEvent()
@@ -48,10 +48,10 @@
    - 6k. Discharge vs. Specific Conductance Plo
    - 6L. Summary Tab
      * *Water Years Function*
-7.	**[Deploying](https://github.com/EthanStevensUSGS/Yellowstone-Application/blob/Updates/README.md#7-deploying)**
-8.	**[Addition of River Sites](https://github.com/EthanStevensUSGS/Yellowstone-Application/blob/Updates/README.md#8adding-river-sites)**
+7.	**[Deploying](https://github.com/EthanStevensUSGS/Yellowstone-Application#7-deploying)**
+8.	**[Addition of River Sites](https://github.com/EthanStevensUSGS/Yellowstone-Application#8adding-river-sites)**
      * *Making an offline site online*
-9. **Addition of Constituents**
+9. **[Addition of Constituents](https://github.com/EthanStevensUSGS/Yellowstone-Application#9-coming-soon)**
 
 
 ### 1.Introduction
