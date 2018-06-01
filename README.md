@@ -4,7 +4,7 @@
 
 1.	**[Introduction](https://github.com/EthanStevensUSGS/Yellowstone-Application/blob/Updates/README.md#introduction)**
 2.	**[Purpose](https://github.com/EthanStevensUSGS/Yellowstone-Application/blob/Updates/README.md#2purpose)**
-3.	**[Main Software Layout]**
+3.	**Main Software Layout**
      * *ui.R*
      * *server.R*
 4.	**Input Files**
