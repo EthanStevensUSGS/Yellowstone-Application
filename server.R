@@ -78,11 +78,11 @@ output$ADate=renderText("Dates Available NONE")
 
 # Snake River
 }else if (input$river==6){
-output$ADate=renderText("Dates Available 9/28/2012-9/30/2015")     
+output$ADate=renderText("Dates Available 9/28/2012-9/13/2017")     
 
 # Falls R.
 }else if (input$river==7){
-output$ADate=renderText("Dates Available NONE")     
+output$ADate=renderText("Dates Available 6/29/2016-9/23/2017")     
 
 # Gardner R.
 }else if (input$river==8){
@@ -347,6 +347,7 @@ if(input$river==1){
   
 # Falls R.
 } else if (input$river==7){
+  no<-"falls"
   Acl=0
   Bcl=0.0681
   Ccl=-0.851
@@ -679,7 +680,7 @@ Data<-OfflineDataSort("./Data/MadisonDataOffline.csv")
 
 # Falls R.
 }else if (input$river==7){
-  Data <-OfflineDataSort("./Data/PLACEHOLDER.csv")
+  Data <-OfflineDataSort("./Data/FallsDataOffline.csv")
   Discharge<-Data[,2]
   SC<-Data[,3]
   TimeDis<-Data[,1]
@@ -956,31 +957,45 @@ Loadfunction<-function(A,B,C, Name, ConcName,Y_N,envir = .GlobalEnv){
        AveragePlot("./Data/MadisonAverageLoad.csv", "p","Average Load (7yr.)")
     }else if(input$GraphType==2 & Y_N==T & no=="06037500"){
       AveragePlot("./Data/MadisonAverageLoad.csv","l","Average Load (7yr.)")
-    #Yellowstone
+    
+      #Yellowstone
     }else if(input$GraphType==1 & Y_N==T & no=="06191500"){
       AveragePlot("./Data/YellowstoneAverageLoad.csv","p","Average Load (5yr.)")
     }else if(input$GraphType==2 & Y_N==T & no=="06191500"){
       AveragePlot("./Data/YellowstoneAverageLoad.csv","l","Average Load (5yr.)")
-    #Firehole   
+    
+      #Firehole   
     } else if (input$GraphType==1 & Y_N==T & no=="06036905"){
       AveragePlot("./Data/FireholeAverageLoad.csv", "p","Average Load (3yr.)")
     }else if (input$GraphType==2 & Y_N==T & no=="06036905"){
       AveragePlot("./Data/FireholeAverageLoad.csv", "l","Average Load (3yr.)")
-    #Gibbon
+    
+      #Gibbon
     }else if (input$GraphType==1 & Y_N==T & no=="gibbon"){
       AveragePlot("./Data/GibbonAverageLoad.csv", "p","Average Load (4yr.)")
     }else if (input$GraphType==2 & Y_N==T & no=="gibbon"){
       AveragePlot("./Data/GibbonAverageLoad.csv", "l","Average Load (4yr.)")
-    #Snake
+    
+      #Snake
     }else if (input$GraphType==1 & Y_N==T & no=="snake"){
-      AveragePlot("./Data/SnakeAverageLoad.csv", "p","Average Load (3yr.)")
+      AveragePlot("./Data/SnakeAverageLoad.csv", "p","Average Load (4yr.)")
     }else if (input$GraphType==2 & Y_N==T & no=="snake"){
-      AveragePlot("./Data/SnakeAverageLoad.csv", "l","Average Load (3yr.)")
-    #Gardner
+      AveragePlot("./Data/SnakeAverageLoad.csv", "l","Average Load (4yr.)")
+    
+      #Gardner
     }else if (input$GraphType==1 & Y_N==T & no=="gardner"){
       AveragePlot("./Data/GardnerAverageLoad.csv", "p","Average Load (5yr.)")
     }else if (input$GraphType==2 & Y_N==T & no=="gardner"){
       AveragePlot("./Data/GardnerAverageLoad.csv", "l","Average Load (5yr.)")
+    
+      #Firehole (Note this is a workaround to make sure we plot this since we don't have an average load for this site)
+    }else if (input$GraphType==1 & Y_N==T & no=="falls"){
+      plot(FinDf$datetime,FinDf$Load,xaxt="n",xlab="Date-Time(MDT)",ylab=Name)
+      axis.POSIXct(1, FinDf$datetime, format="%m/%d/%Y %H:%M", labels = T)
+    }else if (input$GraphType==2 & Y_N==T & no=="falls"){
+      plot(FinDf$datetime,FinDf$Load,xaxt="n",xlab="Date-Time(MDT)",ylab=Name,type="l")
+      axis.POSIXct(1, FinDf$datetime, format="%m/%d/%Y %H:%M", labels = T)
+      
     
     }else{}
     
@@ -1210,6 +1225,13 @@ Water_Year("./Data/Firehole_WaterYears.csv","Firehole River Water Years")
   
 }else if(input$river==4){
   Water_Year("./Data/Gibbon_WaterYears.csv","Gibbon River Water Years") 
+
+}else if(input$river==6){
+  Water_Year("./Data/Snake_WaterYears.csv","Snake River Water Years") 
+
+  #Currently no water years for falls R
+# }else if(input$river==7){
+#  Water_Year("./Data/Falls_WaterYears.csv","Falls River Water Years") 
   
 }else if(input$river==8){
   Water_Year("./Data/Gardner_WaterYears.csv","Gardner River Water Years")
