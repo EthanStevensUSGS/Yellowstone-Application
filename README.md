@@ -144,7 +144,7 @@ See [?tabPanel()] for arguments
 
 SidebarPanel is a pre-defined module by Shiny, this sets up a side bar on the side of the page which we fill with many input widgets to gain information from the user. When we call this module we automatically set up the interface for the page in two sections, the sidebar, and the main panel (section 4d.). Within our side bar we can start to create widgets.
 
-![5c](https://github.com/EthanStevensUSGS/Yellowstone-Application/blob/Updates/GitHub%20Pics/5c.png)
+![5c](https://github.com/EthanStevensUSGS/Yellowstone-Application/blob/master/GitHub%20Pics/5c.png)
 
 The first thing done was to call the sidebarPanel, and label it along with providing a width. Note that the width should not be changed as there are HTML elements dependent on it. After the panel call we can now start to populate the panel with widgets, our first widget being a date input box. 
 		
@@ -161,7 +161,7 @@ The main panel makes up the rest of the interface within the “Plot/Data” tab
 
 As we move on to the second tab, “Summary”, we change the layout quite a bit. Instead of using a side bar panel and main panel as done on the previous tab we are going to use a more custom layout. Fluid page allows for the user to have more control over the layout by using a grid layout 12 columns wide. We can call [column()] or [fluidrow()] and nest ui elements within them to set up our page. The catch is that the 12 column wide grid is “fluid” meaning that if we decided to put another row within our page nested in the previous row, it must add up to 12, even if the previous row only took up 6. The idea of fluid is that column length is more of a percentage of 12 than a sum to 12. This is very confusing at first and I would advise you to read [?fluidpage()]. Since this is so confusing I have decided to explain this part of the code in detail, as updating it to include more elements may be tricky. 
 
-![5e](https://github.com/EthanStevensUSGS/Yellowstone-Application/blob/Updates/GitHub%20Pics/5e.png)
+![5e](https://github.com/EthanStevensUSGS/Yellowstone-Application/blob/master/GitHub%20Pics/5e.png)
 
 The first call of fluid Row sets up our first row, we also define the column length of 6 (out of the possible 12, since this is the first row and not nested). Once we set up our area we print out a plot too that area, this takes up half the page, and nothing is below it, yet.
 
@@ -193,7 +193,7 @@ When the server wants to output data back to the ui.R it needs to output to an e
 
 e.g. 
 
-![6a](https://github.com/EthanStevensUSGS/Yellowstone-Application/blob/Updates/GitHub%20Pics/6a.png)
+![6a](https://github.com/EthanStevensUSGS/Yellowstone-Application/blob/master/GitHub%20Pics/6a.png)
 
 **6b. observeEvent()**
 
@@ -404,14 +404,14 @@ An important note is to make sure you select the correct files and folders you w
 
 Step 1) In the ui.R add the river site to the choices within the selectInput() function. Assign the next consecutive number. 
 
-![8.1](https://github.com/EthanStevensUSGS/Yellowstone-Application/blob/Updates/GitHub%20Pics/8.1.png)
+![8.1](https://github.com/EthanStevensUSGS/Yellowstone-Application/blob/master/GitHub%20Pics/8.1.png)
 
 •	Everything else will be in the server.R code
 
 Step 2) Addition of new site in available date dialogue section, input dates available inside an else if() statement for the new site. 
 e.g.
  
-![8.2](https://github.com/EthanStevensUSGS/Yellowstone-Application/blob/Updates/GitHub%20Pics/8.2.png)
+![8.2](https://github.com/EthanStevensUSGS/Yellowstone-Application/blob/master/GitHub%20Pics/8.2.png)
 
 Step 3) Addition of new site in River Input + Correlations section, assign variables for correlations. Make sure to add a “no” variable even to the offline sites, since this will be used later. If an offline site assign “no” as the site name (character). 
 Once done, if data is offline proceed to step 4, if online see below. 
@@ -430,23 +430,23 @@ Step 4) Make sure input files follow naming format described in section 4a. as w
 
 Step 5) Addition of site in Data Organization/Assignments based on River section, if offline we only need to add one else if() line defining the input$river, if online see below.
 
-![8.5](https://github.com/EthanStevensUSGS/Yellowstone-Application/blob/Updates/GitHub%20Pics/8.5.png)
+![8.5](https://github.com/EthanStevensUSGS/Yellowstone-Application/blob/master/GitHub%20Pics/8.5.png)
  
 If data is online as well, an OnlineDate must be assigned (the date the data switched from online to offline).  Once the online date is assigned, we will then create two else if() lines of code. The else if()’s should define the input$river and how the start date (datestring1) compares to the online date. We need arguments for both start dates before (offline data, invoke offlinedatasort()) and after (online data, invoke onlinedatasort()) the online date. See the code for the Madison in this section for an example.
 
 Step 6) If data is both online and offline please see below, otherwise go to step 7.
 If data is overlapping online and offline we need to add our site to this section, use the Madison in this section as a guide, and see section 6f. for logic. 
  
-![8.6](https://github.com/EthanStevensUSGS/Yellowstone-Application/blob/Updates/GitHub%20Pics/8.6.png)
+![8.6](https://github.com/EthanStevensUSGS/Yellowstone-Application/blob/master/GitHub%20Pics/8.6.png)
 
 Step 7) The next section we need to add this new site too is the Function Load, graph section. We need to add two else if() lines here telling the program to plot either a line or scatter plot. Use the “no” assigned in the correlations section, Y_N=T, and input$Graphtype=1 or 2. The first two lines of the if/else statement handling plotting for all sites when chloride is not the constituent, when chloride is the constituent we need to separately call since the average load data needs to be plotted as well.  Use any of the sites as a guide. Make sure to change the file path to the site specific average load file. 
 
-![8.7](https://github.com/EthanStevensUSGS/Yellowstone-Application/blob/Updates/GitHub%20Pics/8.7.png)
+![8.7](https://github.com/EthanStevensUSGS/Yellowstone-Application/blob/master/GitHub%20Pics/8.7.png)
  
 
 Step 8) Our last step is to add the site to the water year section on the summary tab, this is simply adding the site to the if/else argument with input$river, and then defining the file path to get the water year data. See the other sites as guides.
 
-![8.8](https://github.com/EthanStevensUSGS/Yellowstone-Application/blob/Updates/GitHub%20Pics/8.8.png)
+![8.8](https://github.com/EthanStevensUSGS/Yellowstone-Application/blob/master/GitHub%20Pics/8.8.png)
  
 _Note: If the site being added does not have all three input files, only the SiteOfflineData is cruicial to the program, though the available dates dialogue can be set to “none”, and the user will know not to request data from the site as there is none._
 
