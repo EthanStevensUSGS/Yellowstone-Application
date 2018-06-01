@@ -12,8 +12,7 @@
 	    * *SiteOfflineData.csv*
 	    * *SiteAverageLoad.csv*
 	    * *SiteWaterYears.csv*
-   - 4b. 
-      * *Miscellaneous Files*
+   - 4b. Miscellaneous Files
       * *www folder*
       * *rsconnect folder*
 5.	**[ui.R logic](https://github.com/EthanStevensUSGS/Yellowstone-Application#5-uir-logic)**
