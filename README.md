@@ -7,7 +7,7 @@
 3.	**[Main Software Layout](https://github.com/EthanStevensUSGS/Yellowstone-Application/blob/Updates/README.md#3main-software-layout)**
      * *ui.R*
      * *server.R*
-4.	**Input Files**
+4.	**[Input Files](https://github.com/EthanStevensUSGS/Yellowstone-Application/blob/Updates/README.md#4input-files)**
    - 4a. Offline Data Files
 	    * *SiteOfflineData.csv*
 	    * *SiteAverageLoad.csv*
@@ -16,7 +16,7 @@
       * *Miscellaneous Files*
       * *www folder*
       * *rsconnect folder*
-5.	**ui.R logic**
+5.	**[ui.R logic](https://github.com/EthanStevensUSGS/Yellowstone-Application/blob/Updates/README.md#5-uir-logic)**
    - 5a. Libraries
    - 5b. navbarPage()
       * *Tabs (Plot/Data, Summary)*
@@ -26,7 +26,7 @@
    - 5e. fluidPage()
    - 5f. Embedded HTML 
 
-6.	**server.R logic**
+6.	**[server.R logic](https://github.com/EthanStevensUSGS/Yellowstone-Application/blob/Updates/README.md#6serverr-logic)**
    - 6a. Main Function
      * *Input & Output Calls*
    - 6b. observeEvent()
@@ -48,8 +48,8 @@
    - 6k. Discharge vs. Specific Conductance Plo
    - 6L. Summary Tab
      * *Water Years Function*
-7.	**Deploying**
-8.	**Addition of River Sites**
+7.	**[Deploying](https://github.com/EthanStevensUSGS/Yellowstone-Application/blob/Updates/README.md#7-deploying)**
+8.	**[Addition of River Sites](https://github.com/EthanStevensUSGS/Yellowstone-Application/blob/Updates/README.md#8adding-river-sites)**
      * *Making an offline site online*
 9. **Addition of Constituents**
 
@@ -454,3 +454,6 @@ _Note: If the site being added does not have all three input files, only the Sit
 If a once offline site becomes online, we need to make that available. If this is a completely new site not already implemented in the program please see all of section 8. 
 
 To make a site “live” please see steps 3, 5, 6, and 7 in the main section of 8. And do the online subsection. 
+
+
+### 9. Coming soon..
