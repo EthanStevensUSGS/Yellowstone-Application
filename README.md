@@ -371,15 +371,28 @@ Note: The values for pch determine the shape of the points, google pch.
 
 The right side of the interface of the summary tab is simply an output of the data frame that is FinDf in a data table. The left side is made up of water year data which comes in from input files. This is described below.
 	
-**_Water Year Function:_**
+**Water Year Function:**
 
 Logical Trigger: Always run on user requesting data
 
 Function Inputs: YearFileName, SiteName
-	* YearFileName= Character, file path to SiteWaterYears.csv
-	* SiteName= Character, creates title, format = “Site Water Years” 
+* YearFileName= Character, file path to SiteWaterYears.csv
+* SiteName= Character, creates title, format = “Site Water Years” 
 	
-This function reads in a SiteWaterYear.csv file based on the site selected. Once the data has been properly formatted a max is read from the data and divided by 10. This value is used to set the Y max of the graph. The data is then plotted, and the data is also output to the interface as a table.  
+This function reads in a SiteWaterYear.csv file based on the site selected. Then a second function, Water Year Constituent Calculations and Reading function completes its work before the function continues (see next section). After the second function is completed this function bar graphs the data and prints a table of the data below.
+ 		
+**Water Year Constituent Calculations and Reading:**
+
+Logical Trigger: Run within water year function
+
+Function Inputs: A, B, C, and GraphTitle
+* A: A from correlations section
+* B: B from correlations section
+* C: C from correlations section
+* GraphTitle: Character, Main title for graph
+	
+This function loops through the Water Year data loaded into the program by the water year function. The function loops through the data collecting years, and the discharge & SC. Once these values are saved, concentrations then loads are calculated, and multiplied by 15 to get grams. Once done, the year loads are summed, and assigned to their respective year. The function then returns a data frame with Year, and Load in a data frame, YearLoad. 
+
 
 ### 7. Deploying
 
