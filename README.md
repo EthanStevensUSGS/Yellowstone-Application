@@ -86,7 +86,9 @@ Besides ui.R and server.R there are several other incredibly important files nee
    This file holds the bulk of information used for the program and the name of the file should be the site name followed by 	   	    DataOffline, no spaces. If you are in need of adding additional sites no already implemented please see section (4a & 6c). The 	    file should be of .csv format (you should set up in excel then convert), and should consist of three columns.
 
    Column 1) Date-Time, format= mm-dd-YYYY HH:MM
+   
    Column 2) Discharge, liters per minute (l/m)
+   
    Column 3) Specific Conductance, µS/cm
  
    Important: Column one must be in the specified format via excel, after you change the formatting of the column save as a .csv 	    and exit and then leave the file alone. If the file is appended or edited, the column’s format will no longer be in the 		    specified form and the program will give you the error: “Warning in min(x) : no non-missing arguments to min; returning Inf”. 	    This can be fixed by re-formatting the Date-Time column and saving. 
@@ -98,6 +100,7 @@ Besides ui.R and server.R there are several other incredibly important files nee
 This file holds the average load based on the month and day. This data was calculated using the offline & online (if any) data available and calculating an average load for the given day over a number of years. All these calculations were done in excel, and exclude 2/29 due to leap years. The actual files containing the calculations are not included with the online package, but exist with the originators. The file should consist of two columns.
 
 Column 1) Date-Time, format= mm-dd HH:MM
+
 Column 2) Average Load, liters per minute (l/min) 
 
 Note: Column 1 does not include year, as the average data will be matched with the requested data based on month, day, and time alone. 
@@ -106,12 +109,29 @@ Note: Column 2 has intervals of 15 minutes.
 
 **_SiteWaterYears.csv:_**
 
-This file holds the sum total for a given water year, October 1st to September 29th for any full years we have available for a given site. These values were calculated off the data in the Offline Data File, by multiplying by 15 (to get grams from g/min, since the interval of data was 15 minutes), and then summing the data in the water year. The file should consist of two columns.
+This file holds raw data (discharge, and specific conductance) separated into their respective water years. The formatting of this file is incredibly important, but supposed to be easy to add water years too. A water year runs from October 1st to September 30th, and the water year is the year of that October.    
 
 Column 1) Water Year, format=YYYY
-Column 2) Total Load, grams per year (g/yr)
 
-Note: Do not include commas in Column 2 as R will assign the data as a character and not a numeric object. 
+Column 2) Discharge, liters/minute (l/min)
+
+Column 3) Specific Conductance, MicroSiemens per centimeter (µS/cm)
+
+Column 4) Leave Blank
+
+The formatting and pattern of these columns is incredibly important, if you wish to add a new water year see below.
+
+Step 1) Gather raw data from October 1st to September 30th of the water year you wish to add.
+
+Step 2) Following the pattern, after the last water year in the file, make sure to leave a blank after the SC column, and then write in the water year in the first row, this will be column 1.
+ e.g. 2014 
+
+Step 3) In the next column, next to the water year, input the discharge data, this is column 2.
+
+Step 4) In the next column, next to the discharge data, input the SC data, this is column 3. 
+
+Step 5) Leave a blank column, this is column 4, and if you wish to add another water year, the data will be added in the next consecutive column starting with step 1. 
+
 	
 **4b. Miscellaneous Files**
 
