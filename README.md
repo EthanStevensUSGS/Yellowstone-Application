@@ -444,12 +444,13 @@ Step 1) In the ui.R add the river site to the choices within the selectInput() f
 
 •	Everything else will be in the server.R code
 
-Step 2) Addition of new site in available date dialogue section, input dates available inside an else if() statement for the new site. 
+Step 2) Addition of new site in available date dialogue section, input dates available inside an `else if()` statement for the new site. 
 e.g.
  
 ![8.2](https://github.com/EthanStevensUSGS/Yellowstone-Application/blob/master/GitHub%20Pics/8.2.png)
 
-Step 3) Addition of new site in River Input + Correlations section, assign variables for correlations. Make sure to add a “no” variable even to the offline sites, since this will be used later. If an offline site assign “no” as the site name (character). 
+Step 3) Addition of new site in River Input + Correlations section, assign variables for correlations. Make sure to add a “no” variable even to the offline sites, since this will be used later. **If an offline site assign “no” as the site name (character)**. 
+
 Once done, if data is offline proceed to step 4, if online see below. 
 
 If an online site assign cb, no, state, SiteCheck, SiteCheck2. 
@@ -464,27 +465,46 @@ _Tip: Go to the NWIS site for the particular river and look at the URL, and head
 
 Step 4) Make sure input files follow naming format described in section 4a. as well as making sure the files are in the correct folder.
 
-Step 5) Addition of site in Data Organization/Assignments based on River section, if offline we only need to add one else if() line defining the input$river, if online see below.
+Step 5) Addition of site in Data Organization/Assignments based on River section. 
+See below for example.
 
 ![8.5](https://github.com/EthanStevensUSGS/Yellowstone-Application/blob/master/GitHub%20Pics/8.5.png)
  
-If data is online as well, an OnlineDate must be assigned (the date the data switched from online to offline).  Once the online date is assigned, we will then create two else if() lines of code. The else if()’s should define the input$river and how the start date (datestring1) compares to the online date. We need arguments for both start dates before (offline data, invoke offlinedatasort()) and after (online data, invoke onlinedatasort()) the online date. See the code for the Madison in this section for an example.
+If Foo River is an offline site pulling all data from input files, then only one argument is needed. This argument simply tells the program if Foo R. was selected, and if so, to use the associated offline data file to input data.  
+
+If the Foo R. is a pure online site, all data from online database, then only one argument is needed. The argument use simply tells the program Foo R. was selected, and to use the online data sort function to go and download the requested data.
+
+If the Foo R. has data both online and offline, then two arguments will be needed as well as an Online Date Variable. The online date variable should define the farthest the online data goes back (for both Dis and SC), this variable should be defined in the section before the `if` statement begins. The two arguments needed tell the program the Foo R. was selected and then compares the start date versus the farthest back online data, online date. 
+* If the start date (datestring1) is farther back than the online date, the program will get all the data offline from the start date up until the end date. If the end date is more recent than the online date, then the rest of the data will be downloaded in the overlapping data function, see step 6.  
+* If the start date is after the online date, then the program will download all the data from the data base, and the overlapping data function will not be used.
+
 
 Step 6) If data is both online and offline please see below, otherwise go to step 7.
-If data is overlapping online and offline we need to add our site to this section, use the Madison in this section as a guide, and see section 6f. for logic. 
+
+If data is online and offline we need to add our site to the overlap function section, use the Madison River in this section as a guide, and see (section 6f.) for logic. 
  
 ![8.6](https://github.com/EthanStevensUSGS/Yellowstone-Application/blob/master/GitHub%20Pics/8.6.png)
 
-Step 7) The next section we need to add this new site too is the Function Load, graph section. We need to add two else if() lines here telling the program to plot either a line or scatter plot. Use the “no” assigned in the correlations section, Y_N=T, and input$Graphtype=1 or 2. The first two lines of the if/else statement handling plotting for all sites when chloride is not the constituent, when chloride is the constituent we need to separately call since the average load data needs to be plotted as well.  Use any of the sites as a guide. Make sure to change the file path to the site specific average load file. 
+_Please note the offline and online data does not actually need to overlap. This function simply bridges the gap between the two data sets, leaving a gap in the data if necessary._ 
+
+
+Step 7) The next section we need to add this new site to is the Function Load (Graph) section. We need to add two `else if()` lines telling the program to plot either a line or scatter plot. 
+
+The arguments in the `if/else()` include the “no” assigned in the correlations section, `Y_N=T`, and `input$Graphtype=1 or 2`.
+
+The first two lines of the if/else statement handling plotting for all sites when chloride is not the constituent. When chloride is the constituent, we need a separate call since the average load data needs to be plotted as well.  Use any of the sites as a guide. Make sure to change the file path to the site specific average load file. 
 
 ![8.7](https://github.com/EthanStevensUSGS/Yellowstone-Application/blob/master/GitHub%20Pics/8.7.png)
  
+Note if there is no average load file, there is a workaround that needs to be put in place. This workaround works similar to the first two lines of the if/else statement in the section that plot all the sites when chloride is not the constituent. In this case chloride is the constituent, but we do not have the data available to plot an average load. Therefore, we set Y_N=T, chloride is the constituent, and then plot the requested data, but **do not** use the `AveragePlot()` function to plot the average date, since there is none and doing so would call an error. Please see the example below.
 
-Step 8) Our last step is to add the site to the water year section on the summary tab, this is simply adding the site to the if/else argument with input$river, and then defining the file path to get the water year data. See the other sites as guides.
+![8.71](https://github.com/EthanStevensUSGS/Yellowstone-Application/blob/master/GitHub%20Pics/8.71.png)
+
+
+Step 8) Our last step is to add the site to the water year section on the summary tab. This part is easy, as all we need to do is add one `else if()` argument to the calls water year function section. This argument needs to include the river site input and then the file path to the water year data input file as shown below. Note if there is no water year input file, no worries, as the `else{}` will handle any exception. 
 
 ![8.8](https://github.com/EthanStevensUSGS/Yellowstone-Application/blob/master/GitHub%20Pics/8.8.png)
  
-_Note: If the site being added does not have all three input files, only the SiteOfflineData is cruicial to the program, though the available dates dialogue can be set to “none”, and the user will know not to request data from the site as there is none._
 
 **_If site becomes available online:_**
 If a once offline site becomes online, we need to make that available. If this is a completely new site not already implemented in the program please see all of section 8. 
