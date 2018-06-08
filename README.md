@@ -86,7 +86,9 @@ Besides ui.R and server.R there are several other incredibly important files nee
    This file holds the bulk of information used for the program and the name of the file should be the site name followed by 	   	    DataOffline, no spaces. If you are in need of adding additional sites no already implemented please see section (4a & 6c). The 	    file should be of .csv format (you should set up in excel then convert), and should consist of three columns.
 
    Column 1) Date-Time, format= mm-dd-YYYY HH:MM
+   
    Column 2) Discharge, liters per minute (l/m)
+   
    Column 3) Specific Conductance, µS/cm
  
    Important: Column one must be in the specified format via excel, after you change the formatting of the column save as a .csv 	    and exit and then leave the file alone. If the file is appended or edited, the column’s format will no longer be in the 		    specified form and the program will give you the error: “Warning in min(x) : no non-missing arguments to min; returning Inf”. 	    This can be fixed by re-formatting the Date-Time column and saving. 
@@ -98,6 +100,7 @@ Besides ui.R and server.R there are several other incredibly important files nee
 This file holds the average load based on the month and day. This data was calculated using the offline & online (if any) data available and calculating an average load for the given day over a number of years. All these calculations were done in excel, and exclude 2/29 due to leap years. The actual files containing the calculations are not included with the online package, but exist with the originators. The file should consist of two columns.
 
 Column 1) Date-Time, format= mm-dd HH:MM
+
 Column 2) Average Load, liters per minute (l/min) 
 
 Note: Column 1 does not include year, as the average data will be matched with the requested data based on month, day, and time alone. 
@@ -106,12 +109,29 @@ Note: Column 2 has intervals of 15 minutes.
 
 **_SiteWaterYears.csv:_**
 
-This file holds the sum total for a given water year, October 1st to September 29th for any full years we have available for a given site. These values were calculated off the data in the Offline Data File, by multiplying by 15 (to get grams from g/min, since the interval of data was 15 minutes), and then summing the data in the water year. The file should consist of two columns.
+This file holds raw data (discharge, and specific conductance) separated into their respective water years. The formatting of this file is incredibly important, but supposed to be easy to add water years too. A water year runs from October 1st to September 30th, and the water year is the year of that October.    
 
 Column 1) Water Year, format=YYYY
-Column 2) Total Load, grams per year (g/yr)
 
-Note: Do not include commas in Column 2 as R will assign the data as a character and not a numeric object. 
+Column 2) Discharge, liters/minute (l/min)
+
+Column 3) Specific Conductance, MicroSiemens per centimeter (µS/cm)
+
+Column 4) Leave Blank
+
+The formatting and pattern of these columns is incredibly important, if you wish to add a new water year see below.
+
+Step 1) Gather raw data from October 1st to September 30th of the water year you wish to add.
+
+Step 2) Following the pattern, after the last water year in the file, make sure to leave a blank after the SC column, and then write in the water year in the first row, this will be column 1.
+ e.g. 2014 
+
+Step 3) In the next column, next to the water year, input the discharge data, this is column 2.
+
+Step 4) In the next column, next to the discharge data, input the SC data, this is column 3. 
+
+Step 5) Leave a blank column, this is column 4, and if you wish to add another water year, the data will be added in the next consecutive column starting with step 1. 
+
 	
 **4b. Miscellaneous Files**
 
@@ -278,8 +298,12 @@ The final step of this function is to take the now same length discharge and spe
 Sometimes the user-input start date is before the data becomes available online, and the user-input end date is after the data is online, this means the program has to include both online and offline data in the final output. 
 In a previous section of code the program checked the user-input start date and acted accordingly using either the online or offline data sort. I like to think of this as the programs basic data assignment tool, as it only checks for the start date and how that compares to the OnlineDate, but not if the end date is past the OnlineDate. So if this situation arises the program will have already assigned offline data using the offline data sort function, and we simply need to append it with any data online from the OnlineDate to the user-input end date. 
 
-The program uses an if/else statement to check how the start and end dates compare to the OnlineDate, and if the situation described above is true, the program is allowed to run this section. The program adds a day to the OnlineDate and then assigns it as datestring1. Once assigned, the program runs the online data sort function with the newly assigned start date (datestring1), this avoids overlap. Once the function runs, the newly downloaded only portion of the data is then bound to the previously downloaded offline data and our final data frame is created. The data leading up to the online date is offline and anything after the online date is online. 
-Note this is only in use for the Madison and Yellowstone sites, as all the Firehole river site data is online, and the rest of the sites are all offline. 
+The program uses an if/else statement to check how the start and end dates compare to the OnlineDate, and if the situation described above is true, the program is allowed to run this section. The program adds a day to the OnlineDate and then assigns it as datestring1.  It is important we assign the start date as the online date at this point otherwise the program will try to download online data from the original start date which either exists in the offline data, or does not exist at all. Either way, the data is not online and if we try to download it the program will throw an error. 
+
+Once assigned, the program runs the online data sort function with the newly assigned start date (datestring1), this avoids overlap. Once the function runs, the newly downloaded only portion of the data is then bound to the previously downloaded offline data and our final data frame is created. The data leading up to the online date is offline and anything after the online date is online. 
+
+Note the Firehole site does not have overlapping data between its online and offline data sets. We use the overlapping data in this situation to make the program more robust to user input errors. There is about a year gap between the offline and online data for the Firehole River due to missing SC data on the NWIS end. The oldest Firehole SC data that is online is on 5/16/2014, and we have offline Firehole data at 5/12/2013, so there exists a gap. This part of the program sets the Online Date to 5/16/2014, therefore the program will never try to download data in this gap even if the user requests it. Instead, if a user selects dates in this region, the program will rely on the offline data function which is more robust and will not throw and error but just show a blank, or whatever offline data we have in the range requested. 
+
 
 **6g. CFS conversion**
 
@@ -371,15 +395,28 @@ Note: The values for pch determine the shape of the points, google pch.
 
 The right side of the interface of the summary tab is simply an output of the data frame that is FinDf in a data table. The left side is made up of water year data which comes in from input files. This is described below.
 	
-**_Water Year Function:_**
+**Water Year Function:**
 
 Logical Trigger: Always run on user requesting data
 
 Function Inputs: YearFileName, SiteName
-	* YearFileName= Character, file path to SiteWaterYears.csv
-	* SiteName= Character, creates title, format = “Site Water Years” 
+* YearFileName= Character, file path to SiteWaterYears.csv
+* SiteName= Character, creates title, format = “Site Water Years” 
 	
-This function reads in a SiteWaterYear.csv file based on the site selected. Once the data has been properly formatted a max is read from the data and divided by 10. This value is used to set the Y max of the graph. The data is then plotted, and the data is also output to the interface as a table.  
+This function reads in a SiteWaterYear.csv file based on the site selected. Then a second function, Water Year Constituent Calculations and Reading function completes its work before the function continues (see next section). After the second function is completed this function bar graphs the data and prints a table of the data below.
+ 		
+**Water Year Constituent Calculations and Reading:**
+
+Logical Trigger: Run within water year function
+
+Function Inputs: A, B, C, and GraphTitle
+* A: A from correlations section
+* B: B from correlations section
+* C: C from correlations section
+* GraphTitle: Character, Main title for graph
+	
+This function loops through the Water Year data loaded into the program by the water year function. The function loops through the data collecting years, and the discharge & SC. Once these values are saved, concentrations then loads are calculated, and multiplied by 15 to get grams. Once done, the year loads are summed, and assigned to their respective year. The function then returns a data frame with Year, and Load in a data frame, YearLoad. 
+
 
 ### 7. Deploying
 
@@ -407,12 +444,13 @@ Step 1) In the ui.R add the river site to the choices within the selectInput() f
 
 •	Everything else will be in the server.R code
 
-Step 2) Addition of new site in available date dialogue section, input dates available inside an else if() statement for the new site. 
+Step 2) Addition of new site in available date dialogue section, input dates available inside an `else if()` statement for the new site. 
 e.g.
  
 ![8.2](https://github.com/EthanStevensUSGS/Yellowstone-Application/blob/master/GitHub%20Pics/8.2.png)
 
-Step 3) Addition of new site in River Input + Correlations section, assign variables for correlations. Make sure to add a “no” variable even to the offline sites, since this will be used later. If an offline site assign “no” as the site name (character). 
+Step 3) Addition of new site in River Input + Correlations section, assign variables for correlations. Make sure to add a “no” variable even to the offline sites, since this will be used later. **If an offline site assign “no” as the site name (character)**. 
+
 Once done, if data is offline proceed to step 4, if online see below. 
 
 If an online site assign cb, no, state, SiteCheck, SiteCheck2. 
@@ -427,27 +465,46 @@ _Tip: Go to the NWIS site for the particular river and look at the URL, and head
 
 Step 4) Make sure input files follow naming format described in section 4a. as well as making sure the files are in the correct folder.
 
-Step 5) Addition of site in Data Organization/Assignments based on River section, if offline we only need to add one else if() line defining the input$river, if online see below.
+Step 5) Addition of site in Data Organization/Assignments based on River section. 
+See below for example.
 
 ![8.5](https://github.com/EthanStevensUSGS/Yellowstone-Application/blob/master/GitHub%20Pics/8.5.png)
  
-If data is online as well, an OnlineDate must be assigned (the date the data switched from online to offline).  Once the online date is assigned, we will then create two else if() lines of code. The else if()’s should define the input$river and how the start date (datestring1) compares to the online date. We need arguments for both start dates before (offline data, invoke offlinedatasort()) and after (online data, invoke onlinedatasort()) the online date. See the code for the Madison in this section for an example.
+If Foo River is an offline site pulling all data from input files, then only one argument is needed. This argument simply tells the program if Foo R. was selected, and if so, to use the associated offline data file to input data.  
+
+If the Foo R. is a pure online site, all data from online database, then only one argument is needed. The argument use simply tells the program Foo R. was selected, and to use the online data sort function to go and download the requested data.
+
+If the Foo R. has data both online and offline, then two arguments will be needed as well as an Online Date Variable. The online date variable should define the farthest the online data goes back (for both Dis and SC), this variable should be defined in the section before the `if` statement begins. The two arguments needed tell the program the Foo R. was selected and then compares the start date versus the farthest back online data, online date. 
+* If the start date (datestring1) is farther back than the online date, the program will get all the data offline from the start date up until the end date. If the end date is more recent than the online date, then the rest of the data will be downloaded in the overlapping data function, see step 6.  
+* If the start date is after the online date, then the program will download all the data from the data base, and the overlapping data function will not be used.
+
 
 Step 6) If data is both online and offline please see below, otherwise go to step 7.
-If data is overlapping online and offline we need to add our site to this section, use the Madison in this section as a guide, and see section 6f. for logic. 
+
+If data is online and offline we need to add our site to the overlap function section, use the Madison River in this section as a guide, and see (section 6f.) for logic. 
  
 ![8.6](https://github.com/EthanStevensUSGS/Yellowstone-Application/blob/master/GitHub%20Pics/8.6.png)
 
-Step 7) The next section we need to add this new site too is the Function Load, graph section. We need to add two else if() lines here telling the program to plot either a line or scatter plot. Use the “no” assigned in the correlations section, Y_N=T, and input$Graphtype=1 or 2. The first two lines of the if/else statement handling plotting for all sites when chloride is not the constituent, when chloride is the constituent we need to separately call since the average load data needs to be plotted as well.  Use any of the sites as a guide. Make sure to change the file path to the site specific average load file. 
+_Please note the offline and online data does not actually need to overlap. This function simply bridges the gap between the two data sets, leaving a gap in the data if necessary._ 
+
+
+Step 7) The next section we need to add this new site to is the Function Load (Graph) section. We need to add two `else if()` lines telling the program to plot either a line or scatter plot. 
+
+The arguments in the `if/else()` include the “no” assigned in the correlations section, `Y_N=T`, and `input$Graphtype=1 or 2`.
+
+The first two lines of the if/else statement handling plotting for all sites when chloride is not the constituent. When chloride is the constituent, we need a separate call since the average load data needs to be plotted as well.  Use any of the sites as a guide. Make sure to change the file path to the site specific average load file. 
 
 ![8.7](https://github.com/EthanStevensUSGS/Yellowstone-Application/blob/master/GitHub%20Pics/8.7.png)
  
+Note if there is no average load file, there is a workaround that needs to be put in place. This workaround works similar to the first two lines of the if/else statement in the section that plot all the sites when chloride is not the constituent. In this case chloride is the constituent, but we do not have the data available to plot an average load. Therefore, we set Y_N=T, chloride is the constituent, and then plot the requested data, but **do not** use the `AveragePlot()` function to plot the average date, since there is none and doing so would call an error. Please see the example below.
 
-Step 8) Our last step is to add the site to the water year section on the summary tab, this is simply adding the site to the if/else argument with input$river, and then defining the file path to get the water year data. See the other sites as guides.
+![8.71](https://github.com/EthanStevensUSGS/Yellowstone-Application/blob/master/GitHub%20Pics/8.71.png)
+
+
+Step 8) Our last step is to add the site to the water year section on the summary tab. This part is easy, as all we need to do is add one `else if()` argument to the calls water year function section. This argument needs to include the river site input and then the file path to the water year data input file as shown below. Note if there is no water year input file, no worries, as the `else{}` will handle any exception. 
 
 ![8.8](https://github.com/EthanStevensUSGS/Yellowstone-Application/blob/master/GitHub%20Pics/8.8.png)
  
-_Note: If the site being added does not have all three input files, only the SiteOfflineData is cruicial to the program, though the available dates dialogue can be set to “none”, and the user will know not to request data from the site as there is none._
 
 **_If site becomes available online:_**
 If a once offline site becomes online, we need to make that available. If this is a completely new site not already implemented in the program please see all of section 8. 

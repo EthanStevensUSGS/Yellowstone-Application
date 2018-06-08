@@ -65,7 +65,7 @@ output$ADate=renderText("Dates Available 9/19/2012-Present")
 
 # Firehole R. (WestY)
 }else if (input$river==3){
-output$ADate=renderText("Dates Available 5/13/2010-9/30/2010, 5/16/2015-Present")  
+output$ADate=renderText("Dates Available 5/26/2010-5/12/2013, 5/16/2014-Present")  
 
 # Gibbon R.
 }else if (input$river==4){
@@ -74,7 +74,7 @@ output$ADate=renderText("Dates Available 9/23/2010-9/30/2011
 
 # Firehole (OldF)
 }else if (input$river==5){
-output$ADate=renderText("Dates Available NONE")     
+output$ADate=renderText("Dates Available 5/26/2010-7/5/2012 & 8/22/2016-9/22/2017")     
 
 # Snake River
 }else if (input$river==6){
@@ -90,7 +90,7 @@ output$ADate=renderText("Dates Available 5/24/2012-5/17/2018")
 
   # Tantalus Cr.
 }else if (input$river==9){
-  output$ADate=renderText("Dates Available NONE")    
+  output$ADate=renderText("Dates Available 9/25/2014-6/6/2017")    
 
 }
 }) # Closes Observe, Showing Dates Available to show
@@ -98,6 +98,7 @@ output$ADate=renderText("Dates Available 5/24/2012-5/17/2018")
 # This function allows us to update the program when the user presses the search button. 
 
   observeEvent(input$Go, {
+    
 
 # This is simply a function/loop that initiates a dialog (progress bar) to inform user of progress.
 # The progress bar is updated at set points in the code called "incProgress"
@@ -273,6 +274,7 @@ if(input$river==1){
   
 # Firehole (OldF)
 } else if (input$river==5){
+  no="oldfaithful"
   Acl=0
   Bcl=0.13
   Ccl=-1.7
@@ -421,8 +423,10 @@ if(input$river==1){
 
   # Tantalus Cr. 
 } else if (input$river==9){
-  Acl=0.238478796945126
-  Bcl=-52.8498241161165
+  no="tantalus"
+  Acl=0
+  Bcl=0.238478796945126
+  Ccl=-52.8498241161165
   Aars=0
   Bars=0.0012921678091717 
   Cars=-1.13203596064488 
@@ -464,7 +468,7 @@ if(input$river==1){
   datestring2<-(input$dateEnd)
   
   # Updating progress bar... (1/5) *note this can be changed to any interval
-  incProgress(1/6, detail = paste("Downloading Discharge"))
+  setProgress(1/5, detail = paste("Downloading Discharge"))
   
   
 ########## Set Working Directory ##########
@@ -553,11 +557,12 @@ OnlineDataSort<-function(){
   ##write.table(DisDf, "Discharge.csv", row.names=F, sep=",",col.names=T)
   
   # Update progress bar......
-  incProgress(2/6, detail = paste("Downloading SC"))
+  setProgress(2/5, detail = paste("Downloading SC"))
   
   #SC Download
   cb="00095"
   urlfetch2 <- paste(URL, State, URL2, cb , URL3, NO, URL4, datestring1, URL5, datestring2, sep='')
+  print(urlfetch2)
   urlcontent2<- getURL(urlfetch2)
   urlcontent2 <- gsub('<tr />', '', urlcontent2)
   SCDATA<- read.table(textConnection(urlcontent2), header=T, sep = '\t')
@@ -600,11 +605,11 @@ OnlineDataSort<-function(){
 #Farthest our online data goes back for live sites  
 MadisonOnlineDate<-as.POSIXct("11-17-2014", format="%m-%d-%Y")
 
-#Note no data before this
+#Not data before this
 YellowstoneOnlineDate<-as.POSIXct("01-15-2018", format="%m-%d-%Y") 
 
-#Note no data before this
-FireholeOnlineDate<-as.POSIXct("05-13-2010", format="%m-%d-%Y")
+#Farthest back online data, lets the offline data function handle data gaps since more robust. 
+FireholeOnlineDate<-as.POSIXct("5-16-2014", format="%m-%d-%Y")
 
 #MADISON R.
 if(input$river==1 & datestring1<= MadisonOnlineDate){
@@ -613,6 +618,7 @@ Data<-OfflineDataSort("./Data/MadisonDataOffline.csv")
   SC<-Data[,3]
   TimeDis<-Data[,1]
   TimeSC<-Data[,1]
+
 
 }else if (input$river==1 & datestring1>= MadisonOnlineDate){ 
   Data<-OnlineDataSort()
@@ -640,7 +646,7 @@ Data<-OfflineDataSort("./Data/MadisonDataOffline.csv")
 
 #FIREHOLE R. (WestY)    
 }else if(input$river==3 & datestring1<FireholeOnlineDate){
-  #Currently all data is online back to 5-13-2010, though a file is present if the user wants to append before the given date
+  #Currently all data is online back to 5-13-2010, bu there is large gap, this has been appeneded with offline data file.
   Data <-OfflineDataSort("./Data/FireholeDataOffline.csv")
   Discharge<-Data[,2]
   SC<-Data[,3]
@@ -664,7 +670,7 @@ Data<-OfflineDataSort("./Data/MadisonDataOffline.csv")
 
 # Firehole R. (OldF)
 }else if(input$river==5){
-  Data <-OfflineDataSort("./Data/PLACEHOLDER.csv")
+  Data <-OfflineDataSort("./Data/OldfaithfulDataOffline.csv")
   Discharge<-Data[,2]
   SC<-Data[,3]
   TimeDis<-Data[,1]
@@ -694,7 +700,16 @@ Data<-OfflineDataSort("./Data/MadisonDataOffline.csv")
   TimeDis<-Data[,1]
   TimeSC<-Data[,1]   
   
-} # Closes Orgnaization of Data based on River
+}else if(input$river==9){
+  Data <-OfflineDataSort("./Data/TantalusDataOffline.csv")
+  Discharge<-Data[,2]
+  SC<-Data[,3]
+  TimeDis<-Data[,1]
+  TimeSC<-Data[,1]
+  
+}else{} #Closes data organization based on river.
+
+
 
 ##### Overlapping Data (Offline/Online) #####
 
@@ -716,6 +731,23 @@ if(input$river==1 & datestring2>= MadisonOnlineDate & datestring1<= MadisonOnlin
   
   #Adds a day (in seconds since POSIXct works in seconds), adding a day prevents overlap of data
   datestring1<-YellowstoneOnlineDate+86400
+  DataOnlineOverlap<-OnlineDataSort()
+  
+  
+  #Append all data together to get total data frame
+  Data <- rbind(Data, DataOnlineOverlap)
+  Discharge<-Data[,2]
+  SC<-Data[,3]
+  TimeDis<-Data[,1]
+  TimeSC<-Data[,1]
+
+}else if(input$river==3 & datestring2>= FireholeOnlineDate & datestring1<=FireholeOnlineDate){
+  
+  #Adds a day (in seconds since POSIXct works in seconds), adding a day prevents overlap of data
+  datestring1<-FireholeOnlineDate+86400
+  # It is important we assign the start date as the online date at this point otherwise the program will try to 
+  # download online data from the orignal start date which either exists in the offline data, or does not exist at all. Either
+  # way the data is not online and if we try to download it, the program will throw an error.
   DataOnlineOverlap<-OnlineDataSort()
   
   
@@ -790,8 +822,10 @@ if(input$river==1 & datestring2>= MadisonOnlineDate & datestring1<= MadisonOnlin
   Discharge<-as.numeric(as.character(DisDf$Discharge))
   SC<-as.numeric(as.character(SCDf$SC))
   
+  
   # Creates a Ymax for Dis/Sc Graph, uses the maximum values + 400 to create a YMAX
   DisYtest<-any(is.na(CFSdf$CFS))
+  
   if(DisYtest==T){
   DisYresult<-na.omit(CFSdf$CFS)  
   } else if (DisYtest==F){
@@ -800,24 +834,32 @@ if(input$river==1 & datestring2>= MadisonOnlineDate & datestring1<= MadisonOnlin
 
   DisYMAX<-max(DisYresult)+400
   
+  #Tantlus creek has really low discharge, so we dont add anything to the max.
+  if(input$river==9){
+    DisYMAX<-max(DisYresult)
+  }else{}
+  
   
   SCYtest<-any(is.na(SC))
+  
   if(SCYtest==T){
     SCYresult<-na.omit(SC)  
   } else if (SCYtest==F){
     SCYresult<-SC  
   }
+  
   SCYMAX<-max(SCYresult)+400
   
   # Debugging purposes 
   print(SCYMAX)
   print(DisYMAX)
-
+  
 
   
 ############### Function Loads #################
   
 Loadfunction<-function(A,B,C, Name, ConcName,Y_N,envir = .GlobalEnv){
+  
   
   # Concentration Calc. (See values for A and B above...)
   Conc<-(SC^2*A)+(B*SC)+C
@@ -929,8 +971,7 @@ Loadfunction<-function(A,B,C, Name, ConcName,Y_N,envir = .GlobalEnv){
     
   } # Closes Average Load Function
   
- 
-  ########## Function Graph (Load) ##########
+  ########## Function Load (Graph) ##########
   
   # Outputting to our UI labeled veiw, rendering a plot for this main panel
   output$veiw <-renderPlot({
@@ -938,10 +979,15 @@ Loadfunction<-function(A,B,C, Name, ConcName,Y_N,envir = .GlobalEnv){
     # If/else statement regarding which plot type was selected, then using base plot functions plots,
     # labels axis, and reassigns the x axis to axis.POSIXct axis. Note xaxt deletes default x axis.
   
+    # Error Handling, deals with requested data not in range 
+    tryCatch(
+    
     # NON-Chloride graphs for all sites, no Average Data
+    
     if(input$GraphType==1 & Y_N==F){plot(FinDf$datetime,FinDf$Load,xaxt="n",xlab="Date-Time(MDT)",ylab=Name)
       axis.POSIXct(1, FinDf$datetime, format="%m/%d/%Y %H:%M", labels = T)
       
+    
      
     }else if(input$GraphType==2 & Y_N==F){plot(FinDf$datetime,FinDf$Load,xaxt="n",xlab="Date-Time(MDT)",ylab=Name,type="l")
       axis.POSIXct(1, FinDf$datetime, format="%m/%d/%Y %H:%M", labels = T)
@@ -988,7 +1034,16 @@ Loadfunction<-function(A,B,C, Name, ConcName,Y_N,envir = .GlobalEnv){
     }else if (input$GraphType==2 & Y_N==T & no=="gardner"){
       AveragePlot("./Data/GardnerAverageLoad.csv", "l","Average Load (5yr.)")
     
-      #Firehole (Note this is a workaround to make sure we plot this since we don't have an average load for this site)
+     # Old Faithful (Workaround since no average data)    
+    }else if (input$GraphType==1 & Y_N==T & no=="oldfaithful"){
+      plot(FinDf$datetime,FinDf$Load,xaxt="n",xlab="Date-Time(MDT)",ylab=Name)
+      axis.POSIXct(1, FinDf$datetime, format="%m/%d/%Y %H:%M", labels = T)
+    }else if (input$GraphType==2 & Y_N==T & no=="oldfaithful"){
+      plot(FinDf$datetime,FinDf$Load,xaxt="n",xlab="Date-Time(MDT)",ylab=Name,type="l")
+      axis.POSIXct(1, FinDf$datetime, format="%m/%d/%Y %H:%M", labels = T)  
+      
+    
+      #Falls (Note this is a workaround to make sure we plot this since we don't have an average load for this site)
     }else if (input$GraphType==1 & Y_N==T & no=="falls"){
       plot(FinDf$datetime,FinDf$Load,xaxt="n",xlab="Date-Time(MDT)",ylab=Name)
       axis.POSIXct(1, FinDf$datetime, format="%m/%d/%Y %H:%M", labels = T)
@@ -996,8 +1051,32 @@ Loadfunction<-function(A,B,C, Name, ConcName,Y_N,envir = .GlobalEnv){
       plot(FinDf$datetime,FinDf$Load,xaxt="n",xlab="Date-Time(MDT)",ylab=Name,type="l")
       axis.POSIXct(1, FinDf$datetime, format="%m/%d/%Y %H:%M", labels = T)
       
+    }else if (input$GraphType==1 & Y_N==T & no=="tantalus"){
+      AveragePlot("./Data/TantalusAverageLoad.csv", "p","Average Load (2yr.)")
+    }else if (input$GraphType==2 & Y_N==T & no=="tantalus"){
+      AveragePlot("./Data/TantalusAverageLoad.csv", "l","Average Load (2yr.)")
     
     }else{}
+    ,
+    
+    error=function(error_message) {
+      message("Those dates are not in range!")
+      showModal(modalDialog(
+        title = "Important message",
+        "Dates requested not in range!"
+      ))
+      return(NA)
+    },
+    warning=function(warning_message) {
+      message("Those dates are not in range!")
+      showModal(modalDialog(
+        title = "Important message",
+        "Dates requested not in range!"
+      ))
+      return(NA)
+    }
+    
+    )
     
 ########## Function Download Data ##########
     #*Still under plot Function since Load Type 1 enviroment needed
@@ -1047,7 +1126,7 @@ Loadfunction<-function(A,B,C, Name, ConcName,Y_N,envir = .GlobalEnv){
   
   
   
-incProgress(3/6, detail = paste("Calcualtions..."))
+
 
 ########## 1) Calculations Cl Load ##########
   
@@ -1117,14 +1196,15 @@ incProgress(3/6, detail = paste("Calcualtions..."))
     }
 
 ########## Discharge/SC Plot ##########
+  setProgress(3/5, detail = paste("Calcualtions..."))
   
-incProgress(4/6, detail = paste("Plotting..."))
+  setProgress(4/5, detail = paste("Plotting..."))
 
   # Creating our Dis/SC plot for the Loadtype="1" (Cl) function
   output$Dis_SC<-renderPlot({
   
-    
     if(input$GraphType==1){
+      
       # Define Sizing of Plot (margins)
       par(mar = c(5, 4, 4, 4) + 0.3)
       
@@ -1184,7 +1264,6 @@ incProgress(4/6, detail = paste("Plotting..."))
   
   
 ########## Summary Tab ##########
-  incProgress(5/6, detail = paste("Finishing..."))
   
   # This section represents the code going onto our second tab in the UI, simply a summary of the data
   
@@ -1193,27 +1272,81 @@ incProgress(4/6, detail = paste("Plotting..."))
   output$Summary<-renderDataTable({FinDf
   })
   
-####### Water Year ######
+####### Water Year Function ######
   Water_Year<-function(YearFileName,SiteName){
+    
     YearLoad<-read.csv(YearFileName)
+    
+    #### Water Year Constituent Calculations and Reading ####
+    WaterYear_Calc<-function(A,B,C, GraphTitle){
+    
+    TotalLoads = sapply((1:ncol(YearLoad))[c(FALSE, FALSE, TRUE, FALSE, FALSE)], 
+    function(x) sum((YearLoad[,x]*((YearLoad[,x+1]^2*A)+(YearLoad[,x+1]*B)+C))*15/1000,na.rm=T))
+    
+    YearNames = sapply((1:ncol(YearLoad))[c(TRUE,FALSE,FALSE,FALSE,FALSE)],
+    function(x) colnames(YearLoad[x]))
+    
+    YearNames<-substring(YearNames, 2)
+    
+    YearLoad<-data.frame(YearNames,TotalLoads)
+    
+    YearLoad$TotalLoads<-as.numeric(YearLoad$TotalLoads)
+    YearLoad$YearNames<-as.character(YearLoad$YearNames)
+    
     names(YearLoad)<-c("Year","LoadTot")
-    YearLoad$LoadTot<-as.numeric(YearLoad$LoadTot)
-    yearmax<-max(YearLoad$LoadTot, na.rm = T)
-    additionmax<-yearmax/10
-    yearmax<-yearmax+additionmax
+    
+    YearLoad2<-as.matrix(YearLoad)
+    YearLoad2[,2]<-as.numeric(YearLoad[,2])
+    
+    print(YearLoad)
     
     output$year<-renderPlot({
-    plot(YearLoad$Year,YearLoad$LoadTot, xlab = "Water Year",ylab = "Load Total (g/year)",type="o",main=SiteName,
-         col=c("dodgerblue4"),pch=16)
+      
+      barplot(t(YearLoad[,2]), beside=F, names.arg=YearLoad[,1], xlab = "Water Year", ylab = "Load Total (g/year)", col=c("dodgerblue4"), 
+              main=GraphTitle)
+      
+      
+      YearLoad$LoadTot<-prettyNum(YearLoad$LoadTot,big.mark=",", preserve.width="none")
+      names(YearLoad)<-c("Water Year","Load Total (g)")
+      output$yeartable<-renderDataTable({YearLoad}) 
+      
+    })
+   
+    return(YearLoad)
     
-    YearLoad$LoadTot<-prettyNum(YearLoad$LoadTot,big.mark=",", preserve.width="none")
-    names(YearLoad)<-c("Water Year","Load Total (g)")
-    output$yeartable<-renderDataTable({YearLoad}) 
+  } #End of Water Year Constituent Calculations and Reading Function
+
+##### Water Year Function Cont. #######
     
-    
- })#Closes Water Year Plot
+  #Calss Water Year Calculation Function
+  if(input$LoadType==1){
+    YearLoad<-WaterYear_Calc(Acl,Bcl,Ccl, "Total Chloride Load (g/year)")
+  }else if (input$LoadType==2){
+    YearLoad<-WaterYear_Calc(Aars,Bars,Cars, "Total Arsenic Load (g/year)")
+  }else if (input$LoadType==3){
+    YearLoad<-WaterYear_Calc(Aalk,Balk,Calk, "Total Alkalinity Load (g/year)")
+  }else if (input$LoadType==4){
+    YearLoad<-WaterYear_Calc(Aso4,Bso4,Cso4, "Total Sulfate Load (g/year)")
+  }else if (input$LoadType==5){
+    YearLoad<-WaterYear_Calc(Af,Bf,Cf, "Total Flouride Load (g/year)")
+  }else if (input$LoadType==6){
+    YearLoad<-WaterYear_Calc(Aca,Bca,Cca, "Total Calcium Load (g/year)")
+  }else if (input$LoadType==7){
+    YearLoad<-WaterYear_Calc(Asio2,Bsio2,Csio2, "Total Silicon Dioxide Load (g/year)")
+  }else if (input$LoadType==8){
+    YearLoad<-WaterYear_Calc(Ana,Bna,Cna, "Total Sodium Load (g/year)")
+  }else if (input$LoadType==9){
+    YearLoad<-WaterYear_Calc(Ak,Bk,Ck, "Total Potassium Load (g/year)")
+  }else if (input$LoadType==10){
+    YearLoad<-WaterYear_Calc(Ali,Bli,Cli, "Total Lithium Load (g/year)")
+  }else if (input$LoadType==11){
+    YearLoad<-WaterYear_Calc(Ab,Bb,Cb, "Total Boron Load (g/year)")
+  }
+      
+
 }# Closes Water_Year Function
   
+#Calls water year function  
 if(input$river==1){
 Water_Year("./Data/Madison_WaterYears.csv","Madison River Water Years") 
 
@@ -1226,6 +1359,9 @@ Water_Year("./Data/Firehole_WaterYears.csv","Firehole River Water Years")
 }else if(input$river==4){
   Water_Year("./Data/Gibbon_WaterYears.csv","Gibbon River Water Years") 
 
+}else if(input$river==5){
+  Water_Year("./Data/Oldfaithful_WaterYears.csv","Old Faithful River Water Years")
+  
 }else if(input$river==6){
   Water_Year("./Data/Snake_WaterYears.csv","Snake River Water Years") 
 
@@ -1236,17 +1372,19 @@ Water_Year("./Data/Firehole_WaterYears.csv","Firehole River Water Years")
 }else if(input$river==8){
   Water_Year("./Data/Gardner_WaterYears.csv","Gardner River Water Years")
   
+}else if(input$river==9){
+  Water_Year("./Data/Tantalus_WaterYears.csv","Tantalus River Water Years")
+  
 
 }else{}
 
 
-    
+
   
   
   
   
-  
-  
+  setProgress(5/5, detail = paste("Finishing...")) 
   
   
   

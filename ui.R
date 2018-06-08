@@ -21,7 +21,7 @@ library(shinydashboard)
 library(dplyr)
 library(data.table)
 library(scales)
-
+library(profvis)
 
 
 # Defining a list of sites used for this application
@@ -175,7 +175,6 @@ mainPanel(
     
     # Outputs plots that were created on the server side, and implements the click function, deafult to stack 
     # created graphs vertically due to navbar/sidebar page.
-  
   
     plotOutput("veiw",click = "Load_click"),
     plotOutput("Dis_SC", click = "DisSC_click")
