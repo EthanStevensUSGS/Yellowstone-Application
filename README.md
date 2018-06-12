@@ -513,3 +513,65 @@ To make a site “live” please see steps 3, 5, 6, and 7 in the main section of
 
 
 ### 9. Coming soon..
+
+### 10. Packages and Citations
+
+##### shiny  
+- Winston Chang, Joe Cheng, JJ Allaire, Yihui Xie and Jonathan McPherson
+  (2017). shiny: Web Application Framework for R. R package version 1.0.3.
+  https://CRAN.R-project.org/package=shiny
+
+##### zoo
+- Achim Zeileis and Gabor Grothendieck (2005). zoo: S3 Infrastructure for
+  Regular and Irregular Time Series. Journal of Statistical Software,
+  14(6), 1-27. doi:10.18637/jss.v014.i06
+
+##### lubridate
+- Garrett Grolemund, Hadley Wickham (2011). Dates and Times Made Easy with
+  lubridate. Journal of Statistical Software, 40(3), 1-25. URL
+  http://www.jstatsoft.org/v40/i03/.
+
+##### Xts
+- Jeffrey A. Ryan and Joshua M. Ulrich (2018). xts: eXtensible Time
+  Series. R package version 0.10-2. https://CRAN.R-project.org/package=xts
+
+##### RCurl
+- Duncan Temple Lang and the CRAN team (2016). RCurl: General Network
+  (HTTP/FTP/...) Client Interface for R. R package version 1.95-4.8.
+  https://CRAN.R-project.org/package=RCurl
+
+##### padr
+- Edwin Thoen (2017). padr: Quickly Get Datetime Data Ready for Analysis.
+  R package version 0.3.0. https://CRAN.R-project.org/package=padr
+
+##### ggplot2
+- H. Wickham. ggplot2: Elegant Graphics for Data Analysis. Springer-Verlag
+  New York, 2009.
+
+##### nnet
+- Venables, W. N. & Ripley, B. D. (2002) Modern Applied Statistics with S.
+  Fourth Edition. Springer, New York. ISBN 0-387-95457-0
+
+##### dplyr
+- Hadley Wickham, Romain Francois, Lionel Henry and Kirill Müller (2017).
+  dplyr: A Grammar of Data Manipulation. R package version 0.7.2.
+  https://CRAN.R-project.org/package=dplyr
+
+##### data.table
+- Matt Dowle and Arun Srinivasan (2017). data.table: Extension of
+  `data.frame`. R package version 1.10.4.
+  https://CRAN.R-project.org/package=data.table
+
+##### scales
+- Hadley Wickham (2016). scales: Scale Functions for Visualization. R
+  package version 0.4.1. https://CRAN.R-project.org/package=scales
+
+##### profvis
+- Winston Chang and Javier Luraschi (2018). profvis: Interactive
+  Visualizations for Profiling R Code. R package version 0.3.5.
+  https://CRAN.R-project.org/package=profvis
+
+
+
+
+
