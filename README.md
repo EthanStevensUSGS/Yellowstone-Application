@@ -518,23 +518,23 @@ When new correlations for a new constituent not already added to the program bec
 
 Step 1) In the `Sidebar (Tab-1)` section of the ui.R code, you will need to add the new constituent with the next consecutive index number. 
  
- ![9.1](https://github.com/EthanStevensUSGS/Yellowstone-Application/blob/master/GitHub%20Pics/9.1.png)
+ ![9.1](https://github.com/EthanStevensUSGS/Yellowstone-Application/blob/master/GitHub%20Pics/9.1.PNG)
  
 Step 2) In the `River Input + Correlations` section of the server.R code, three new variables will need to be defined. `A_`, `B_`, and `C_`. Following the letter, an element or molecule code is suggested. These variables represent the values used to calculate the concentration of the given species, and then in turn the load. 
 
-![9.2](https://github.com/EthanStevensUSGS/Yellowstone-Application/blob/master/GitHub%20Pics/9.2.png)
+![9.2](https://github.com/EthanStevensUSGS/Yellowstone-Application/blob/master/GitHub%20Pics/9.2.PNG)
   
 The example shown above represents the variables for chloride, note that Acl is set to zero, since there is no actual A value going into the concentration calculation. For more information on how these values are used please see section 6j. 
 
 Step 3) This next step requires you to create a new section within the server.R code. Scroll down through the server.R or browse the navigator to find the sections labeled `1) Calculations ____ Load`. You will want to add your section following the last constituent load section. 
 
-![9.3](https://github.com/EthanStevensUSGS/Yellowstone-Application/blob/master/GitHub%20Pics/9.3.png)
+![9.3](https://github.com/EthanStevensUSGS/Yellowstone-Application/blob/master/GitHub%20Pics/9.3.PNG)
  
 Simply copy and paste, and then change the A:C values as well as the naming labels. 
 
 Step 4) In the `Water Year Function Cont.` section of the server.R code you are going to place your new constituent following the last entry. Again, this is a straightforward copy and paste, all you are changing is the A:C values, and the naming label. 
 
-![9.4](https://github.com/EthanStevensUSGS/Yellowstone-Application/blob/master/GitHub%20Pics/9.4.png)
+![9.4](https://github.com/EthanStevensUSGS/Yellowstone-Application/blob/master/GitHub%20Pics/9.4.PNG)
  
 After this has been done, your new constituent should be in the program. 
 
