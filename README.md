@@ -50,7 +50,7 @@
 7.	**[Deploying](https://github.com/EthanStevensUSGS/Yellowstone-Application#7-deploying)**
 8.	**[Addition of River Sites](https://github.com/EthanStevensUSGS/Yellowstone-Application#8adding-river-sites)**
      * *Making an offline site online*
-9. **[Addition of Constituents](https://github.com/EthanStevensUSGS/Yellowstone-Application#9-coming-soon)**
+9. **[Addition of Constituents](https://github.com/EthanStevensUSGS/Yellowstone-Application#9-addition-of-constituents)**
 10. **[Packages and Citations](https://github.com/EthanStevensUSGS/Yellowstone-Application#10-packages-and-citations)**
 
 
