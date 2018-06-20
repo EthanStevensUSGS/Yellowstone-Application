@@ -1,7 +1,7 @@
 
 ### Yellowstone National Park River Load Web Application (Hybrid) ####
 # Server.R                                                 
-# Updated 5/23/2018                                        
+# Updated 6/7/2018                                        
 # Questions= etst8408@colorado.edu                          
 #
 # Notes: This is the hybrid version of the YNP app, there
@@ -465,23 +465,17 @@ if(input$river==1){
     
   # Assigns dates in the form of strings (text/characters), from our date input in the UI.
   datestring1<-(input$dateStart)
+  datestring1OG<-datestring1 #This is for file naming since overlapping data function can change this date.
   datestring2<-(input$dateEnd)
   
   # Updating progress bar... (1/5) *note this can be changed to any interval
   setProgress(1/5, detail = paste("Downloading Discharge"))
   
-  
-########## Set Working Directory ##########
-  
-  # CHANGE PATH FOR USER
-  ##setwd("~/WebDevelopment/OfflineYNPapp")
-  
 
-########## User Defined Function ##########
+########## Sorting Functions ##########
 
 # This is one of R's strengths, we can basically create a function that does whatever we
-# want it to do. We simply create it by defining it below. This was not used in the online program, as there 
-# were not many sites.
+# want it to do. We simply create it by defining it below. 
 
 # Defines we want a function named OfflineDataSort, DataFile is our x in f(x), in our case x will
 # be the name of the file we want to work with depending on the site. Look at next section for use.
@@ -501,12 +495,14 @@ print(datestring2)
 
 Data$datetime<-as.POSIXct(Data$datetime, format="%m-%d-%Y %H:%M")
 
-#BUG: Creating NA values for Yellowstone, Madison & Firehole?
+#Returns data from this function's enviroment to whatever variable called the function.
 return(Data<-Data[Data$datetime >= datestring1 & Data$datetime <= datestring2,])
 
   
-} #Closes User Defined Function
+} #Closes Offline Function
   
+
+#This is the online data sort function, used to download data from the NWIS/water data database.  
 OnlineDataSort<-function(){
   
   ### Download Data ###
@@ -514,6 +510,7 @@ OnlineDataSort<-function(){
   
   #Check for data >120 days old, if so uses the NWIS server instead of waterdata server.(The future holds mystery regarding this section,
   # in a couple months the NWIS site will be completly rewoked and in turn this section will need to be completly reworked.)
+  
   if(Sys.Date()-120<=dateCHECK){
   URL='https://waterdata.usgs.gov/'
   } else{
@@ -553,9 +550,6 @@ OnlineDataSort<-function(){
   
   DisDf$datetime<-as.POSIXct(DisDf$datetime, format="%Y-%m-%d %H:%M")
   
-  #Debugging
-  ##write.table(DisDf, "Discharge.csv", row.names=F, sep=",",col.names=T)
-  
   # Update progress bar......
   setProgress(2/5, detail = paste("Downloading SC"))
   
@@ -589,19 +583,16 @@ OnlineDataSort<-function(){
   # Padding
   DisDf<-pad(DisDf, interval='15 min',start_val=datestring1, end_val = datestring2)
   
-  #Debugging
-  ##write.table(SCDf, "SC.csv", row.names=F, sep=",",col.names=T)
-  
   #Create Fin Data Frame
   Data<-data.frame(DisDf,SC)
-  
-  #Data$datetime<-as.POSIXct(Data$datetime,format="%m-%d-%Y %H:%M")
   
   return(Data)
   
 }
+
 ########## Data Orginazation/Assignments based on River ##########
 
+#### Online Date Assignments
 #Farthest our online data goes back for live sites  
 MadisonOnlineDate<-as.POSIXct("11-17-2014", format="%m-%d-%Y")
 
@@ -611,6 +602,7 @@ YellowstoneOnlineDate<-as.POSIXct("01-15-2018", format="%m-%d-%Y")
 #Farthest back online data, lets the offline data function handle data gaps since more robust. 
 FireholeOnlineDate<-as.POSIXct("5-16-2014", format="%m-%d-%Y")
 
+#### Data Organization
 #MADISON R.
 if(input$river==1 & datestring1<= MadisonOnlineDate){
 Data<-OfflineDataSort("./Data/MadisonDataOffline.csv")
@@ -707,11 +699,15 @@ Data<-OfflineDataSort("./Data/MadisonDataOffline.csv")
   TimeDis<-Data[,1]
   TimeSC<-Data[,1]
   
-}else{} #Closes data organization based on river.
+}else{} # Closes Data Organization/ Assignments based on river.
 
 
 
 ##### Overlapping Data (Offline/Online) #####
+
+# It is important we assign the start date as the online date at this point otherwise the program will try to 
+# download online data from the orignal start date which either exists in the offline data, or does not exist at all. Either
+# way the data is not online and if we try to download it, the program will throw an error.
 
 if(input$river==1 & datestring2>= MadisonOnlineDate & datestring1<= MadisonOnlineDate){
   
@@ -745,9 +741,6 @@ if(input$river==1 & datestring2>= MadisonOnlineDate & datestring1<= MadisonOnlin
   
   #Adds a day (in seconds since POSIXct works in seconds), adding a day prevents overlap of data
   datestring1<-FireholeOnlineDate+86400
-  # It is important we assign the start date as the online date at this point otherwise the program will try to 
-  # download online data from the orignal start date which either exists in the offline data, or does not exist at all. Either
-  # way the data is not online and if we try to download it, the program will throw an error.
   DataOnlineOverlap<-OnlineDataSort()
   
   
@@ -757,17 +750,14 @@ if(input$river==1 & datestring2>= MadisonOnlineDate & datestring1<= MadisonOnlin
   SC<-Data[,3]
   TimeDis<-Data[,1]
   TimeSC<-Data[,1]
+
+  
 } else{}
-
-# Note if a user appends either the Yellowstone or Firehole before the online data (or another online site is added), 
-# and places data in offline file, the program will read in the data but will not be able to overlap online & offline data. 
-# In order to do this use the above code with the new sites to allow for overlapping.
-
 
 
 ########## CFS Discharge Data for DIS/SC graph ##########  
   
-  # Creating a duplicate data frame of our discharge data, but not converting this one to CFS from l/min
+  # Creating a duplicate data frame of our discharge data, converting to CFS
   DischargeCFS<-(Discharge/60)/28.3169
   
   CFSdf<-data.frame(TimeDis,DischargeCFS)
@@ -775,16 +765,15 @@ if(input$river==1 & datestring2>= MadisonOnlineDate & datestring1<= MadisonOnlin
   names(CFSdf)<-c("datetime","CFS")
   
   
-  # Reformats the time column attached to a POSIXct object, useful
-  # for date-time numbers. 
+  # Reformats the time column attached to a POSIXct object, useful for date-time numbers. 
   CFSdf$datetime<-as.POSIXct(CFSdf$datetime, format="%m-%d-%Y %H:%M")
   
   
-########## Compatibility, SC and Dis Handling ######
+########## Compatibility, SC and Dis Handling ########
   
   #__________Unit Conversion (l/min) SUSPENDED, input data is coming in as l/min
   
-  # l/min
+  # l/min (suspended)
   DischargeFin<-Discharge
   
   #__________Discharge Data Frame
@@ -839,7 +828,6 @@ if(input$river==1 & datestring2>= MadisonOnlineDate & datestring1<= MadisonOnlin
     DisYMAX<-max(DisYresult)
   }else{}
   
-  
   SCYtest<-any(is.na(SC))
   
   if(SCYtest==T){
@@ -861,7 +849,7 @@ if(input$river==1 & datestring2>= MadisonOnlineDate & datestring1<= MadisonOnlin
 Loadfunction<-function(A,B,C, Name, ConcName,Y_N,envir = .GlobalEnv){
   
   
-  # Concentration Calc. (See values for A and B above...)
+  # Concentration Calc. (See values for A, B, and C above...)
   Conc<-(SC^2*A)+(B*SC)+C
  
   # Load Calc 
@@ -1086,7 +1074,7 @@ Loadfunction<-function(A,B,C, Name, ConcName,Y_N,envir = .GlobalEnv){
       
       # Sets filename in form of a function using previously defined date
       filename = function() {
-        paste('Loads-', datestring1, " to ",datestring2, '.csv', sep="")
+        paste('Loads-', datestring1OG, " to ",datestring2, '.csv', sep="")
       }, # Closes Filname Function
       
       # Creates download file, contents defined above in DownDf
@@ -1376,7 +1364,13 @@ Water_Year("./Data/Firehole_WaterYears.csv","Firehole River Water Years")
   Water_Year("./Data/Tantalus_WaterYears.csv","Tantalus River Water Years")
   
 
-}else{}
+}else{
+  
+  noYear<-data.table("No Water Year Available", NA)
+  output$yeartable<-renderDataTable(noYear)
+  
+  
+}
 
 
 
