@@ -38,7 +38,7 @@ navbarPage(
 
 #### HTML Code & Styling ####  
   
-  # Sets the upper right image, this image needs to be located in folder named "www", img name needs to match
+  # Sets the upper left image, this image needs to be located in folder named "www", img name needs to match
   title=div(img(src="logo.png"),"Yellowstone National Park River Loads"),
                  
                
@@ -48,13 +48,17 @@ navbarPage(
                  # Defines our first tab, named Plot/Data
                  tabPanel("Plot/Data",
                           
+                          #Creates GitHub Logo with link to repository
+                          #tags$a(href="https://github.com/EthanStevensUSGS/Yellowstone-Application",
+                          #       (img(src='GitHubLogo.png', align = "right",width = "40px", height = "40px"))),
+                          
                           # tags$head allows us to directly input html code into R, this sections mainly
                           # defines style choices such as color of various sections. This is using a bootstrap
                           # set up. Go to https://pikock.github.io/bootstrap-magic/ for further information. 
-                          tags$head(
+                    tags$head(
                             
-                            # Styling NavBar ( color ) HTML Code
-                            tags$style(type = 'text/css','.navbar {
+                        # Styling NavBar ( color ) HTML Code
+                          tags$style(type = 'text/css','.navbar {
                                             background-color: #00244a;
                                             color: #00881f;
                                             }',
@@ -67,35 +71,91 @@ navbarPage(
                                             '.navbar-default .navbar-brand {
                                             color: #ffffff;
                                            }'
+                                     
+                                       
                 )),
-                 
-                 
-                          tags$head(
+                       #Height of nav-bar
+                       tags$head(
+                         tags$style(type='text/css', 
+                           ".container-fluid {min-height: 90px} "
+                           
+               )),
+                   
+                      #Navbar tab padding
+                      tags$head(
+                       tags$style(type='text/css', 
+                             ".navbar-nav {padding-left: 25px;
+                                           padding-top: 39.5px} "
+                             
+                      
+                        
+               )),
+               
+                    # Coloring Tabs (note HTML not CSS)
+                    tags$head(
+                      tags$style(HTML(
+                            ".navbar-default .navbar-nav > .active > a, .navbar-default .navbar-nav > 
+                             .active > a:focus, .navbar-default .navbar-nav > .active > a:hover {
+                            background-color: #ffffff;
+                            color: #00244a;
+                            outline: 4px solid white
                             
-                           # Styling Column 4  
-                           tags$style(type = 'text/css','.col-sm-4 {
+                            
+                            } "
+                            
+                            
+                            
+              ))),
+              
+                   # Create Right Side Text
+                    tags$script(HTML("var header = $('.navbar > .container-fluid');
+                     header.append('<div style=\"float:right\"><h3>Follow us on GitHub</h3></div>');
+                             console.log(header)"
+             )),
+             
+                  # Create Right Side GitHub Logo
+                    tags$script(HTML("var header = $('.navbar > .container-fluid');
+                              header.append('<div style=\"float:right\"><a href=\"https://github.com/EthanStevensUSGS/Yellowstone-Application\"><img src=\"GitHubLogo.png\" alt=\"GitHub\" style=\"float:right; width:33px; height:41px;padding-top:10px;\"> </a></div>');
+                              console.log(header)")
+              ),
+             
+                   #Style Right Side Text
+                   tags$head(
+                      tags$style(type='text/css','.h3, h3 {
+                                font-size: 14px;
+                                color: #ffffff;
+                                padding-left: 8px
+                                }'
+            )),
+              
+          
+            
+            # Styling Column 4  
+                    tags$head(
+                      tags$style(type = 'text/css','.col-sm-4 {
                                            background-color: #ffffff;
                                            color: #ffffff;
                                           }'
-                )),
-                          
-                         tags$head(
-                           
-                          # Styling Well 
-                          tags$style(type = 'text/css','.well {
-                                           background-color: #00244a;
+          )),
+            
+            
+  
+              
+                    # Styling Well  
+                    tags$head(
+                      tags$style(type = 'text/css','.well {
+                                         background-color: #00244a;
                                           }'
                 )),
               
-              
-                        tags$head(
-                          
-                         # Styling navbar, (increasing height)  
-                         tags$style(type = 'text/css','.navbar {
+                    # Styling navbar, (increasing height)
+                    tags$head(
+                      tags$style(type = 'text/css','.navbar {
                                          min-height: 80px;
                                          font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
                                          font-size: 14px;
                                         }'
+                
                 )), # HTML CODE CLOSED 
                 
 #### Sidebar (Tab-1) ####
@@ -130,7 +190,7 @@ sidebarPanel("Please Select Parameters",width = 4,
 
       textOutput("Ya"),
   
-  # User input, radio buttons for load type, defaulted at 1 (chloride)
+  # User input, drp[down] for load type, defaulted at 1 (chloride)
   selectInput("LoadType", label = h2("Load Type"),
     choices = list("Chloride" = 1, "Arsenic" = 2, "Alkalinity"=3, "Sulfate"=4, "Flouride"=5, 
                    "Calcium"=6, "Silicon Dioxide"=7, "Sodium"=8, "Potassium"=9, "Lithium"=10, "Boron"=11), 
