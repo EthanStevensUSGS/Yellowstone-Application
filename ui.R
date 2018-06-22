@@ -107,15 +107,15 @@ navbarPage(
                             
               ))),
               
-                   # Create Right Side Text
-                    tags$script(HTML("var header = $('.navbar > .container-fluid');
-                     header.append('<div style=\"float:right\"><h3>Follow us on GitHub</h3></div>');
-                             console.log(header)"
-             )),
+      #             # Create Right Side Text
+      #              tags$script(HTML("var header = $('.navbar > .container-fluid');
+      #               header.append('<div style=\"float:right\"><h3>Follow us on GitHub</h3></div>');
+      #                       console.log(header)"
+      #       )),
              
                   # Create Right Side GitHub Logo
                     tags$script(HTML("var header = $('.navbar > .container-fluid');
-                              header.append('<div style=\"float:right\"><a href=\"https://github.com/EthanStevensUSGS/Yellowstone-Application\"><img src=\"GitHubLogo.png\" alt=\"GitHub\" style=\"float:right; width:33px; height:41px;padding-top:10px;\"> </a></div>');
+                              header.append('<div style=\"float:right\"><a href=\"https://github.com/EthanStevensUSGS/Yellowstone-Application\"><img src=\"GitHubLogo.png\" alt=\"GitHub\" style=\"float:right; width:30px; height:36px;padding-top:10px;\"> </a></div>');
                               console.log(header)")
               ),
              
@@ -126,11 +126,18 @@ navbarPage(
                                 color: #ffffff;
                                 padding-left: 8px
                                 }'
+                                
             )),
-              
+            
+            
+                 # Create Right Side Sciencebase Logo
+                  tags$script(HTML("var header = $('.navbar > .container-fluid');
+                             header.append('<div style=\"float:right\"><a href=\"https://www.sciencebase.gov/catalog/item/58d3f0bbe4b0d4ac7e32a416\"><img src=\"SBLogo.png\" alt=\"SB\" style=\"float:right; width:44px; height:40px;padding-top:8px;padding-right:10px;\"> </a></div>');
+                             console.log(header)")
+            ),
           
             
-            # Styling Column 4  
+                   # Styling Column 4  
                     tags$head(
                       tags$style(type = 'text/css','.col-sm-4 {
                                            background-color: #ffffff;
