@@ -516,6 +516,7 @@ OnlineDataSort<-function(){
   } else{
   URL='https://nwis.waterdata.usgs.gov/'  
   }
+
   State<-state
   URL2='/nwis/uv/?cb_'
   CB<-cb
@@ -531,7 +532,20 @@ OnlineDataSort<-function(){
   urlcontent <- gsub('<tr />', '', urlcontent)
   dischargeDATA<- read.table(textConnection(urlcontent), header=T, sep = '\t')
   head(dischargeDATA)
-  newdata<-subset(dischargeDATA[SiteCheck])
+  
+  tryCatch(
+    
+    newdata<-subset(dischargeDATA[SiteCheck]),
+    
+    error=function(error_message) {
+      message("Error: NWIS Site Error")
+      showModal(modalDialog(
+        title = "Important message",
+        "There is a problem with the NWIS database (Discharge Download Error). Please refresh browser."
+      ))
+    }
+  ) 
+  
   Discharge<-newdata[-c(1),,drop=F]
   names(Discharge)<-"Discharge"
   
@@ -561,7 +575,21 @@ OnlineDataSort<-function(){
   urlcontent2 <- gsub('<tr />', '', urlcontent2)
   SCDATA<- read.table(textConnection(urlcontent2), header=T, sep = '\t')
   head(SCDATA)
-  newdata<-subset(SCDATA[SiteCheck2])
+  print("b")
+  
+  tryCatch(
+    
+    newdata<-subset(SCDATA[SiteCheck2]),
+    
+    error=function(error_message) {
+      message("Error: NWIS Site Error")
+      showModal(modalDialog(
+        title = "Important message",
+        "There is a problem with the NWIS database (SC Download Error). Please refresh browser."
+      ))
+    }
+  ) 
+  
   SC<-newdata[-c(1),,drop=F]
   TimeSC<-SCDATA["datetime"]
   TimeSC<-TimeSC[-c(1),,drop=F]
@@ -569,6 +597,8 @@ OnlineDataSort<-function(){
   SCDf<-data.frame(TimeSC,SC)
   SCDf$datetime<-as.POSIXct(SCDf$datetime, format="%Y-%m-%d %H:%M")
   names(SCDf)<-c("Datetime","SC")
+  
+
   
   # Add HH:MM for help with strt/end_values for padding
   datestring1<-paste(datestring1,"00:00")
@@ -585,6 +615,9 @@ OnlineDataSort<-function(){
   
   #Create Fin Data Frame
   Data<-data.frame(DisDf,SC)
+  
+  
+  
   
   return(Data)
   

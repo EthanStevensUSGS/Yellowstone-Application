@@ -22,6 +22,7 @@ library(dplyr)
 library(data.table)
 library(scales)
 library(profvis)
+library(shinyjs)
 
 
 # Defining a list of sites used for this application
@@ -132,7 +133,7 @@ navbarPage(
             
                  # Create Right Side Sciencebase Logo
                   tags$script(HTML("var header = $('.navbar > .container-fluid');
-                             header.append('<div style=\"float:right\"><a href=\"https://www.sciencebase.gov/catalog/item/58d3f0bbe4b0d4ac7e32a416\"><img src=\"SBLogo.png\" alt=\"SB\" style=\"float:right; width:44px; height:40px;padding-top:8px;padding-right:10px;\"> </a></div>');
+                             header.append('<div style=\"float:right\"><a href=\"https://www.sciencebase.gov/catalog/item/58d3f0bbe4b0d4ac7e32a416\"><img src=\"SBlogo.png\" alt=\"SB\" style=\"float:right; width:44px; height:40px;padding-top:8px;padding-right:10px;\"> </a></div>');
                              console.log(header)")
             ),
           
