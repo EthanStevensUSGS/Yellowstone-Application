@@ -23,6 +23,9 @@ library(data.table)
 library(scales)
 library(profvis)
 library(shinyjs)
+library(rvest)
+library(XML)
+library(shinyalert)
 
 
 # Defining a list of sites used for this application
@@ -240,6 +243,8 @@ sidebarPanel("Please Select Parameters",width = 4,
 
 # Defining what is in our main panel, mainly just the graphs.
 mainPanel(
+  
+  useShinyalert(),
     
     # Outputs plots that were created on the server side, and implements the click function, deafult to stack 
     # created graphs vertically due to navbar/sidebar page.

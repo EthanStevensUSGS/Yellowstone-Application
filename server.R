@@ -90,7 +90,7 @@ output$ADate=renderText("Dates Available 5/24/2012-5/17/2018")
 
   # Tantalus Cr.
 }else if (input$river==9){
-  output$ADate=renderText("Dates Available 9/25/2014-6/6/2017")    
+  output$ADate=renderText("Dates Available 9/25/2014-6/6/2017 & 8/10/2018-Present")    
 
 }
 }) # Closes Observe, Showing Dates Available to show
@@ -423,7 +423,10 @@ if(input$river==1){
 
   # Tantalus Cr. 
 } else if (input$river==9){
-  no="tantalus"
+  cb<-"00060" 
+  no<-"06036940"
+  state<-"mt"
+  SiteCheck<-"X82337_00060"
   Acl=0
   Bcl=0.238478796945126
   Ccl=-52.8498241161165
@@ -472,7 +475,7 @@ if(input$river==1){
   setProgress(1/5, detail = paste("Downloading Discharge"))
   
 
-########## Sorting Functions ##########
+########## Sorting Functions (Online/Offline) ##########
 
 # This is one of R's strengths, we can basically create a function that does whatever we
 # want it to do. We simply create it by defining it below. 
@@ -543,6 +546,7 @@ OnlineDataSort<-function(){
         title = "Important message",
         "There is a problem with the NWIS database (Discharge Download Error). Please refresh browser."
       ))
+      Sys.sleep(5)
     }
   ) 
   
@@ -587,6 +591,8 @@ OnlineDataSort<-function(){
         title = "Important message",
         "There is a problem with the NWIS database (SC Download Error). Please refresh browser."
       ))
+      Sys.sleep(5)
+      
     }
   ) 
   
@@ -623,17 +629,170 @@ OnlineDataSort<-function(){
   
 }
 
+
+########## Sattelite Data Sort ##########
+
+# This function utlizes the isi-data center with the telemetry systems used by USGS. Currently
+# there is only one telemetry sysmtem being used in the Tantalus Creek, which records SC and Temp.
+# In order to get all the data needed we must also access the NWIS site to obatain Discharge Data.
+
+SatteliteDataSort<-function(SiteSpecificUrl){
+  
+  datestring1<-input$dateStart
+  
+  #Checks to see if overlapping data is calling this function
+  if(input$river==9 & datestring2>= TantalusOnlineDate & datestring1<=TantalusOnlineDate){
+    datestring1<-TantalusOnlineDate
+  }
+  
+  datestring2<-input$dateEnd
+  h = getCurlHandle( cookiefile = "")
+  
+  #URl defining path to daterange data for given site
+  FirstSat <- SiteSpecificUrl
+  
+  startIN<-datestring1
+  endIN<-datestring2
+  
+  url<-paste(FirstSat,"startdate=",startIN,"&enddate=",endIN,sep="")
+  
+  print(url)
+  
+  pgsession <-html_session(url)
+  
+  pgform    <-html_form(pgsession)[[1]]
+  
+  
+  filled_form <- set_values(pgform,
+                            "ctl00$cphBody$txtUsername" = "USGSGuest", 
+                            "ctl00$cphBody$txtPass" = "TantalusCreek")
+
+  
+  submit_form(pgsession,filled_form)
+  
+  Page <- jump_to(pgsession, url)
+  
+  HTML_Pre <- read_html(Page,encoding = "", options=('nbsp'=XINCLUDE))  
+  
+  HTML<-htmlParse(HTML_Pre)
+  
+  tbls <- readHTMLTable(HTML, headers=T, trim=T, as.data.frame = T,row.names=NULL)
+  
+  df<-tbls[57]
+  
+  df<-data.frame(Reduce(rbind, df))
+  
+  
+  #Problem
+  SCdf<-data.frame(df[,1],df[,2],df[,3],df[,4])
+  
+    
+  SCdf[,1]<-as.POSIXct(SCdf[,1], format="%d-%b-%y %I:%M %p")
+    
+  
+  #Displays Battery Voltage for Admin
+  LastUpdate<-nrow(SCdf)
+  print(SCdf[LastUpdate,5])
+  
+  #Drop Temp, Actual Conductivity and Voltage of Battery
+  SCDf<-data.frame(SCdf[,1],SCdf[,4])
+  
+  names(SCDf)<-c("Date-Time(MDT)","SC")
+
+  # We now have SC data and time data in the enviroment, now we need discharge from NWIS
+  
+  ### Download Data ###
+  dateCHECK<-as.POSIXct(datestring1, format="%Y-%m-%d")
+  
+  #Check for data >120 days old, if so uses the NWIS server instead of waterdata server.(The future holds mystery regarding this section,
+  # in a couple months the NWIS site will be completly rewoked and in turn this section will need to be completly reworked.)
+  
+  
+  if(Sys.Date()-120<=dateCHECK){
+    URL='https://waterdata.usgs.gov/'
+  } else{
+    URL='https://nwis.waterdata.usgs.gov/'  
+  }
+  
+  State<-state
+  URL2='/nwis/uv/?cb_'
+  CB<-cb
+  URL3='=on&format=rdb&site_no='
+  NO<-no
+  URL4='&period=&begin_date='
+  URL5='&end_date='
+  
+  #Discharge Download
+  urlfetch <- paste(URL, State, URL2, CB , URL3, NO, URL4, datestring1, URL5, datestring2, sep='')
+  print(urlfetch)
+  urlcontent<- getURL(urlfetch)
+  urlcontent <- gsub('<tr />', '', urlcontent)
+  dischargeDATA<- read.table(textConnection(urlcontent), header=T, sep = '\t')
+  head(dischargeDATA)
+  
+  Discharge<-dischargeDATA[-c(1),,drop=F]
+  
+  Discharge<-Discharge[,5]
+  
+  names(Discharge)<-"Discharge"
+  
+  Discharge<-as.numeric(as.character(Discharge))
+  
+  TimeRawDis<-dischargeDATA["datetime"]
+  TimeDis<-TimeRawDis[-c(1),,drop=F]
+  names(TimeDis)<"Time"
+  
+  # Convert to (l/min) + put back into POSIXct for padding
+  DischargeFin<-(Discharge*60)*28.3169
+  DisDf<-data.frame(TimeDis,DischargeFin)
+  names(DisDf)<-c("datetime","Discharge")
+  
+  DisDf$datetime<-as.POSIXct(DisDf$datetime, format="%Y-%m-%d %H:%M")
+  names(SCDf)<-c("datetime","SC")
+  SCDf$datetime<-as.POSIXct(SCDf$datetime, format="%Y-%m-%d %H:%M")
+  
+  # Add HH:MM for help with strt/end_values for padding
+  datestring1<-paste(datestring1,"00:00")
+  datestring2<-paste(datestring2,"23:45")
+  datestring1<-as.POSIXct(datestring1, format="%Y-%m-%d %H:%M")
+  datestring2<-as.POSIXct(datestring2, format="%Y-%m-%d %H:%M")
+
+  #Now we have both Discharge and SC data from the Sattelite and NWIS now merge and pa
+  # Padding
+  SCDf<-pad(SCDf, interval='15 min',start_val=datestring1, end_val = datestring2)
+  
+  SCDf<-SCDf %>% distinct(datetime, .keep_all = TRUE)
+  
+  print(SCDf)
+  SC<-SCDf["SC"]
+ 
+  # Padding
+  DisDf<-pad(DisDf, interval='15 min',start_val=datestring1, end_val = datestring2)
+  
+  print(DisDf)
+  
+  #Create Fin Data Frame
+  Data<-data.frame(DisDf,SC)
+
+  return(Data)
+  
+
+}
+
+
+
 ########## Data Orginazation/Assignments based on River ##########
 
 #### Online Date Assignments
 #Farthest our online data goes back for live sites  
 MadisonOnlineDate<-as.POSIXct("11-17-2014", format="%m-%d-%Y")
 
-#Not data before this
+#No data before this data for Yellowstone
 YellowstoneOnlineDate<-as.POSIXct("01-15-2018", format="%m-%d-%Y") 
 
-#Farthest back online data, lets the offline data function handle data gaps since more robust. 
 FireholeOnlineDate<-as.POSIXct("5-16-2014", format="%m-%d-%Y")
+
+TantalusOnlineDate<-as.POSIXct("8-10-2018", format="%m-%d-%Y")
 
 #### Data Organization
 #MADISON R.
@@ -725,12 +884,21 @@ Data<-OfflineDataSort("./Data/MadisonDataOffline.csv")
   TimeDis<-Data[,1]
   TimeSC<-Data[,1]   
   
-}else if(input$river==9){
+}else if(input$river==9 & datestring1<= TantalusOnlineDate){
   Data <-OfflineDataSort("./Data/TantalusDataOffline.csv")
   Discharge<-Data[,2]
   SC<-Data[,3]
   TimeDis<-Data[,1]
   TimeSC<-Data[,1]
+  
+}else if(input$river==9 & datestring1>= TantalusOnlineDate){
+  
+  Data<-SatteliteDataSort('http://www.isi-data.com/DetailRange.aspx?lid=2015915727879&gid=1&')
+  Discharge<-Data[,2]
+  SC<-Data[,3]
+  TimeDis<-Data[,1]
+  TimeSC<-Data[,1]
+  
   
 }else{} # Closes Data Organization/ Assignments based on river.
 
@@ -783,6 +951,22 @@ if(input$river==1 & datestring2>= MadisonOnlineDate & datestring1<= MadisonOnlin
   SC<-Data[,3]
   TimeDis<-Data[,1]
   TimeSC<-Data[,1]
+  
+}else if(input$river==9 & datestring2>= TantalusOnlineDate & datestring1<=TantalusOnlineDate){
+  
+  #Adds a day (in seconds since POSIXct works in seconds), adding a day prevents overlap of data
+  #Note this is calling the SATTELITE Function and not the ONLINEDATASORT funciton
+  DataOnlineOverlap<-SatteliteDataSort('http://www.isi-data.com/DetailRange.aspx?lid=2015915727879&gid=1&')
+  
+  
+  #Append all data together to get total data frame
+  print(Data)
+  Data <- rbind(Data, DataOnlineOverlap)
+  Discharge<-Data[,2]
+  SC<-Data[,3]
+  TimeDis<-Data[,1]
+  TimeSC<-Data[,1]
+
 
   
 } else{}
@@ -1072,9 +1256,9 @@ Loadfunction<-function(A,B,C, Name, ConcName,Y_N,envir = .GlobalEnv){
       plot(FinDf$datetime,FinDf$Load,xaxt="n",xlab="Date-Time(MDT)",ylab=Name,type="l")
       axis.POSIXct(1, FinDf$datetime, format="%m/%d/%Y %H:%M", labels = T)
       
-    }else if (input$GraphType==1 & Y_N==T & no=="tantalus"){
+    }else if (input$GraphType==1 & Y_N==T & no=="06036940"){
       AveragePlot("./Data/TantalusAverageLoad.csv", "p","Average Load (2yr.)")
-    }else if (input$GraphType==2 & Y_N==T & no=="tantalus"){
+    }else if (input$GraphType==2 & Y_N==T & no=="06036940"){
       AveragePlot("./Data/TantalusAverageLoad.csv", "l","Average Load (2yr.)")
     
     }else{}
