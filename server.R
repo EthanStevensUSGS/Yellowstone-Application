@@ -1,11 +1,11 @@
 
 ### Yellowstone National Park River Load Web Application (Hybrid) ####
 # Server.R                                                 
-# Updated 6/7/2018                                        
+# Updated 11/1/2018                                        
 # Questions= etst8408@colorado.edu                          
 #
 # Notes: This is the hybrid version of the YNP app, there
-#  is 3 sites with live data associated with this program, rest of data comes 
+#  are 4 sites with live data associated with this program, rest of data comes 
 #  from user created csv files. 
 #
 # File format= 3 columns, .csv 
@@ -16,8 +16,6 @@
 # File names= "YellowstoneOfflineData", "GardnerOfflineData", "FireholeOfflineData", etc.
 #              These can be ammened with more data. 
 #
-# IMPORTANT: This programs pulls data from active working directory, please put file
-#            path to directory (where the files are) in line ____ in setwd() 
 #
 # V1.0 Padding Fixed
 #      Overlapping online/offline data
