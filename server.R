@@ -1441,28 +1441,30 @@ Loadfunction<-function(A,B,C, Name, ConcName,Y_N,envir = .GlobalEnv){
       par(mar = c(5, 4, 4, 4) + 0.3)
       
       # Plot using baseplot tools, plotting Discharge vs Datetime, SC added soon... *note y max set to DisYMAX
-      plot(CFSdf$datetime,CFSdf$CFS, xaxt="n",xlab = "Date-Time(MDT)",ylab = "Discharge (CFS)",ylim =c(0,DisYMAX), 
-           type="l")
+      plot(CFSdf$datetime,CFSdf$CFS, xaxt="n",xlab = "Date-Time(MDT)",ylab = "",ylim =c(0,DisYMAX), 
+           type="l", col="blue")
+      axis(side = 2, col = 'blue', col.axis = 'blue', col.ticks = 'blue')
+      mtext("Discharge (CFS)", side = 2, line = 3, col="blue")
       
       # This code allows us to add a secondary set of data to the same plot
       par(new=TRUE)
       
       # Plot, leaving axis labels blank to not interfere with orignal plot. * second Y axis max set to SCYMAX
-      plot(CFSdf$datetime, SC, axes = FALSE, bty = "n", xlab = "", ylab = "", col="blue",
+      plot(CFSdf$datetime, SC, axes = FALSE, bty = "n", xlab = "", ylab = "", col="red",
            pch=9,ylim =c(0,SCYMAX),type="l")
       
       # Calls secondary y axis, and changes colors
-      axis(side=4,col="blue",col.ticks="blue",col.axis="blue",col.lab="blue")
+      axis(side=4,col="red",col.ticks="red",col.axis="red",col.lab="red")
       
       # Labels X-Axis with POSIXct labels instead of deafault
       axis.POSIXct(1, CFSdf$datetime, format="%m/%d/%Y %H:%M", labels = T)
       
       # Labels secondary Y axis
-      mtext("Specific Conductance (microSiemens)", side=4, line=3)
+      mtext("Specific Conductance (microSiemens)", side=4, line=3, col="red")
       
       # Adds legend to diffrentiate SC and Dis. **Note "pch" is the icon shape, can be changed 
       legend("topleft",legend=c("Discharge","SC"),
-             text.col=c("black","blue"),pch=c(1,9),col=c("black","blue"))
+             text.col=c("black","black"),pch=c(1,9),col=c("blue","red"))
     }
     
   }) # Closes Dis/SC Plot
