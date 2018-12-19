@@ -5,7 +5,7 @@
 # Questions= etst8408@colorado.edu                          
 #
 # Notes: This is the hybrid version of the YNP app, there
-#  are 4 sites with live data associated with this program, rest of data comes 
+#  are 4 sites with live data associated with this program, the rest of data comes 
 #  from user created csv files. 
 #
 # File format= 3 columns, .csv 
@@ -63,28 +63,28 @@ output$ADate=renderText("Dates Available 9/19/2012-Present")
 
 # Firehole R. (WestY)
 }else if (input$river==3){
-output$ADate=renderText("Dates Available 5/26/2010-5/12/2013, 5/16/2014-Present")  
+output$ADate=renderText("Dates Available 5/26/2010-Present")  
 
 # Gibbon R.
 }else if (input$river==4){
 output$ADate=renderText("Dates Available 9/23/2010-9/30/2011 
-                        & 5/15/2014-5/6/2018")   
+                        & 5/15/2014-9/21/2018")   
 
 # Firehole (OldF)
 }else if (input$river==5){
-output$ADate=renderText("Dates Available 5/26/2010-7/5/2012 & 8/22/2016-9/22/2017")     
+output$ADate=renderText("Dates Available 5/26/2010-7/5/2012 & 8/22/2016-9/22/2018")     
 
 # Snake River
 }else if (input$river==6){
-output$ADate=renderText("Dates Available 9/28/2012-9/13/2017")     
+output$ADate=renderText("Dates Available 9/28/2012-9/22/2018")     
 
 # Falls R.
 }else if (input$river==7){
-output$ADate=renderText("Dates Available 6/29/2016-9/23/2017")     
+output$ADate=renderText("Dates Available 6/29/2016-9/15/2018")     
 
 # Gardner R.
 }else if (input$river==8){
-output$ADate=renderText("Dates Available 5/24/2012-5/17/2018")    
+output$ADate=renderText("Dates Available 5/24/2012-9/24/2018")    
 
   # Tantalus Cr.
 }else if (input$river==9){
@@ -631,7 +631,7 @@ OnlineDataSort<-function(){
 ########## Sattelite Data Sort ##########
 
 # This function utlizes the isi-data center with the telemetry systems used by USGS. Currently
-# there is only one telemetry sysmtem being used in the Tantalus Creek, which records SC and Temp.
+# there is only one telemetry sysmtem being used at Tantalus Creek, which records SC and Temp.
 # In order to get all the data needed we must also access the NWIS site to obatain Discharge Data.
 
 SatteliteDataSort<-function(SiteSpecificUrl){
@@ -828,7 +828,7 @@ Data<-OfflineDataSort("./Data/MadisonDataOffline.csv")
 
 #FIREHOLE R. (WestY)    
 }else if(input$river==3 & datestring1<FireholeOnlineDate){
-  #Currently all data is online back to 5-13-2010, bu there is large gap, this has been appeneded with offline data file.
+  #Currently all data is online back to 5-13-2010, but there is large gap, this has been appeneded with offline data file.
   Data <-OfflineDataSort("./Data/FireholeDataOffline.csv")
   Discharge<-Data[,2]
   SC<-Data[,3]
@@ -891,7 +891,7 @@ Data<-OfflineDataSort("./Data/MadisonDataOffline.csv")
   
 }else if(input$river==9 & datestring1>= TantalusOnlineDate){
   
-  Data<-SatteliteDataSort('http://www.isi-data.com/DetailRange.aspx?lid=2015915727879&gid=1&')
+  Data<-SatteliteDataSort('https://isi-data.com/Detail.aspx?lid=2015915727879&gid=1')
   Discharge<-Data[,2]
   SC<-Data[,3]
   TimeDis<-Data[,1]
@@ -1412,55 +1412,59 @@ Loadfunction<-function(A,B,C, Name, ConcName,Y_N,envir = .GlobalEnv){
       par(mar = c(5, 4, 4, 4) + 0.3)
       
       # Plot using baseplot tools, plotting Discharge vs Datetime, SC added soon... *note y max set to DisYMAX
-      plot(CFSdf$datetime,CFSdf$CFS, xaxt="n",xlab = "Date-Time(MDT)",ylab = "Discharge(CFS)",ylim =c(0,DisYMAX))
+      plot(CFSdf$datetime,CFSdf$CFS, xaxt="n",xlab = "Date-Time(MDT)",ylab = "",ylim =c(0,DisYMAX), col="blue")
+      axis(side = 2, col = 'blue', col.axis = 'blue', col.ticks = 'blue')
+      mtext("Discharge (CFS)", side = 2, line = 3, col="blue")
       
       # This code allows us to add a secondary set of data to the same plot
       par(new=TRUE)
       
       # Plot, leaving axis labels blank to not interfere with orignal plot. * second Y axis max set to SCYMAX
-      plot(CFSdf$datetime, SC, axes = FALSE, bty = "n", xlab = "", ylab = "", col="blue",
+      plot(CFSdf$datetime, SC, axes = FALSE, bty = "n", xlab = "", ylab = "", col="red",
            pch=6,ylim =c(0,SCYMAX))
       
       # Calls secondary y axis, and changes colors
-      axis(side=4,col="blue",col.ticks="blue",col.axis="blue",col.lab="blue")
+      axis(side=4,col="red",col.ticks="red",col.axis="red",col.lab="red")
       
       # Labels X-Axis with POSIXct labels instead of deafault
       axis.POSIXct(1, CFSdf$datetime, format="%m/%d/%Y %H:%M", labels = T)
       
       # Labels secondary Y axis
-      mtext("Specific Conductance (microSiemens)", side=4, line=3)
+      mtext("Specific Conductance (microSiemens)", side=4, line=3, col="red")
       
       # Adds legend to diffrentiate SC and Dis. **Note "pch" is the icon shape, can be changed 
      legend("topleft",legend=c("Discharge","SC"),
-             text.col=c("black","black"),pch=c(1,6),col=c("black","blue"), xpd=TRUE, inset=c(0,-.2))
+             text.col=c("black","black"),pch=c(1,6),col=c("blue","red"), xpd=TRUE, inset=c(0,-.2))
      
     }else if(input$GraphType==2){
       # Define Sizing of Plot (margins)
       par(mar = c(5, 4, 4, 4) + 0.3)
       
       # Plot using baseplot tools, plotting Discharge vs Datetime, SC added soon... *note y max set to DisYMAX
-      plot(CFSdf$datetime,CFSdf$CFS, xaxt="n",xlab = "Date-Time(MDT)",ylab = "Discharge(CFS)",ylim =c(0,DisYMAX), 
-           type="l")
+      plot(CFSdf$datetime,CFSdf$CFS, xaxt="n",xlab = "Date-Time(MDT)",ylab = "",ylim =c(0,DisYMAX), 
+           type="l", col="blue")
+      axis(side = 2, col = 'blue', col.axis = 'blue', col.ticks = 'blue')
+      mtext("Discharge (CFS)", side = 2, line = 3, col="blue")
       
       # This code allows us to add a secondary set of data to the same plot
       par(new=TRUE)
       
       # Plot, leaving axis labels blank to not interfere with orignal plot. * second Y axis max set to SCYMAX
-      plot(CFSdf$datetime, SC, axes = FALSE, bty = "n", xlab = "", ylab = "", col="blue",
+      plot(CFSdf$datetime, SC, axes = FALSE, bty = "n", xlab = "", ylab = "", col="red",
            pch=9,ylim =c(0,SCYMAX),type="l")
       
       # Calls secondary y axis, and changes colors
-      axis(side=4,col="blue",col.ticks="blue",col.axis="blue",col.lab="blue")
+      axis(side=4,col="red",col.ticks="red",col.axis="red",col.lab="red")
       
       # Labels X-Axis with POSIXct labels instead of deafault
       axis.POSIXct(1, CFSdf$datetime, format="%m/%d/%Y %H:%M", labels = T)
       
       # Labels secondary Y axis
-      mtext("Specific Conductance (microSiemens)", side=4, line=3)
+      mtext("Specific Conductance (microSiemens)", side=4, line=3, col="red")
       
       # Adds legend to diffrentiate SC and Dis. **Note "pch" is the icon shape, can be changed 
       legend("topleft",legend=c("Discharge","SC"),
-             text.col=c("black","blue"),pch=c(1,9),col=c("black","blue"))
+             text.col=c("black","black"),pch=c(1,9),col=c("blue","red"))
     }
     
   }) # Closes Dis/SC Plot
@@ -1568,9 +1572,8 @@ Water_Year("./Data/Firehole_WaterYears.csv","Firehole River Water Years")
 }else if(input$river==6){
   Water_Year("./Data/Snake_WaterYears.csv","Snake River Water Years") 
 
-  #Currently no water years for falls R
-# }else if(input$river==7){
-#  Water_Year("./Data/Falls_WaterYears.csv","Falls River Water Years") 
+}else if(input$river==7){
+ Water_Year("./Data/Falls_WaterYears.csv","Falls River Water Years") 
   
 }else if(input$river==8){
   Water_Year("./Data/Gardner_WaterYears.csv","Gardner River Water Years")
