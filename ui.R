@@ -181,8 +181,8 @@ sidebarPanel("Please Select Parameters",width = 4,
     # Our first input via user, we are allowing the user to select a river, and assigning values 1:3 to that selction.
     # Note: the input is saved as "river", if we want to use this value on the server side we call input$river.
     selectInput("river", label = h2("Select River"), 
-      choices = list("Madison (Live)" = 1, "Yellowstone (Live)" = 2, "Firehole W. Yellowstone (Live)" = 3, "Gibbon"= 4, 
-                    "Firehole R. at Old Faithful" = 5,"Snake River"= 6, "Falls River"=7, "Gardner"= 8, "Tantalus Creek" = 9), 
+      choices = list("Madison R. (Live)" = 1, "Yellowstone R. (Live)" = 2, "Firehole R. (Live)" = 3, "Gibbon R."= 4, 
+                    "Firehole R. at Old Faithful" = 5,"Snake R."= 6, "Falls R."=7, "Gardner R."= 8, "Tantalus Cr." = 9), 
       selected = 1),
     
       # Debugging
